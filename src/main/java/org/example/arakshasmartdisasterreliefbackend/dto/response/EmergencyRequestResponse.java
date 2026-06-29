@@ -1,4 +1,4 @@
-package org.example.arakshasmartdisasterreliefbackend.dto.request;
+package org.example.arakshasmartdisasterreliefbackend.dto.response;
 
 import lombok.*;
 

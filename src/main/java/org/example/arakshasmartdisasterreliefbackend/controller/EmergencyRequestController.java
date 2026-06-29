@@ -3,7 +3,7 @@ package org.example.arakshasmartdisasterreliefbackend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestRequest;
-import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestResponse;
+import org.example.arakshasmartdisasterreliefbackend.dto.response.EmergencyRequestResponse;
 import org.example.arakshasmartdisasterreliefbackend.service.EmergencyRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

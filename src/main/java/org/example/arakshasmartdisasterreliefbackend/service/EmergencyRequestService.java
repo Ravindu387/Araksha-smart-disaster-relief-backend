@@ -1,7 +1,7 @@
 package org.example.arakshasmartdisasterreliefbackend.service;
 
 import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestRequest;
-import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestResponse;
+import org.example.arakshasmartdisasterreliefbackend.dto.response.EmergencyRequestResponse;
 
 import java.util.List;
 

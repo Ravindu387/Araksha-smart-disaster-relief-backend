@@ -2,7 +2,7 @@ package org.example.arakshasmartdisasterreliefbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestRequest;
-import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestResponse;
+import org.example.arakshasmartdisasterreliefbackend.dto.response.EmergencyRequestResponse;
 import org.example.arakshasmartdisasterreliefbackend.entity.EmergencyRequest;
 import org.example.arakshasmartdisasterreliefbackend.repository.EmergencyRequestRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.EmergencyRequestService;
