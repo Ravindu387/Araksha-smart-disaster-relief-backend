@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.arakshasmartdisasterreliefbackend.enums.Role;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +15,5 @@ public class RegisterRequest {
     private String lastName;
     private String email;
     private String password;
-    private String role;
+    private Role role;
 }
