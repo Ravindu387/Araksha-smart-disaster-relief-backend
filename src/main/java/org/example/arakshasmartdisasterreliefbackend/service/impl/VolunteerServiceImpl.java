@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import org.example.arakshasmartdisasterreliefbackend.dto.request.VolunteerRequest;
-import org.example.arakshasmartdisasterreliefbackend.dto.request.VolunteerResponse;
+import org.example.arakshasmartdisasterreliefbackend.dto.response.VolunteerResponse;
 import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
 import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.VolunteerService;
