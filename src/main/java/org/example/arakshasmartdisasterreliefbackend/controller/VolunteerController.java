@@ -1,7 +1,7 @@
 package org.example.arakshasmartdisasterreliefbackend.controller;
 
 import org.example.arakshasmartdisasterreliefbackend.dto.request.VolunteerRequest;
-import org.example.arakshasmartdisasterreliefbackend.dto.request.VolunteerResponse;
+import org.example.arakshasmartdisasterreliefbackend.dto.response.VolunteerResponse;
 import org.example.arakshasmartdisasterreliefbackend.service.VolunteerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
