@@ -3,11 +3,9 @@ package org.example.arakshasmartdisasterreliefbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "volunteers")
+@Table(name = "volunteer_hubs")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,16 +41,4 @@ public class VolunteerHub {
         @Column(nullable = false)
         private Boolean available;
 
-        @OneToMany(mappedBy = "volunteer",
-                cascade = CascadeType.ALL,
-                fetch = FetchType.LAZY)
-        @Builder.Default
-        private List<Task> tasks = new ArrayList<>();
-
-        @OneToOne(mappedBy = "volunteer",
-                cascade = CascadeType.ALL,
-                fetch = FetchType.LAZY)
-        private Performance performance;
-
 }
-
