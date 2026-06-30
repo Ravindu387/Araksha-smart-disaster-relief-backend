@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
 
-    List<Volunteer> findTop5ByOrderByTasksDesc();
+    long countByStatus(String status);
 
     long countByStatusIgnoreCase(String status);
+
+    List<Volunteer> findTop5ByOrderByTasksDesc();
+
 }
