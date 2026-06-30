@@ -1,45 +1,50 @@
 package org.example.arakshasmartdisasterreliefbackend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "shelter")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
-@Table(name = "Shelter")
 public class Shelter {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long shelterId;
+    private Integer id;
 
+    @Column(nullable = false, length = 150)
     private String name;
 
+    @Column(nullable = false, length = 255)
     private String address;
 
-    private String city;
+    @Column(nullable = false)
+    private Integer capacity;
 
-    private Double latitude;
+    @Column(nullable = false)
+    private Integer occupied;
 
-    private Double longitude;
-
-    private Integer totalCapacity;
-
-    private Integer occupiedBeds;
-
-    private Boolean wifi;
-
-    private Boolean water;
-
-    private Boolean electricity;
-
+    @Column(length = 20)
     private String status;
 
+    @Column(columnDefinition = "TEXT")
+    private String amenities;
+
+    @Column(precision = 10, scale = 8)
+    private BigDecimal latitude;
+
+    @Column(precision = 11, scale = 8)
+    private BigDecimal longitude;
+
+    @Column(name = "last_updated", insertable = false, updatable = false)
     private LocalDateTime lastUpdated;
+
+
 }

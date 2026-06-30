@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ShelterRepository extends JpaRepository<Shelter, Long> {
+public interface ShelterRepository extends JpaRepository<Shelter, Integer> {
 
     List<Shelter> findByStatus(String status);
 
@@ -14,11 +14,11 @@ public interface ShelterRepository extends JpaRepository<Shelter, Long> {
 
     @Query("""
         SELECT AVG(
-            (CAST(s.occupiedBeds AS double) /
-             CAST(s.totalCapacity AS double)) * 100
+            (CAST(s.occupied AS double) /
+             CAST(s.capacity AS double)) * 100
         )
         FROM Shelter s
-        WHERE s.totalCapacity > 0
+        WHERE s.capacity > 0
         """)
     Double calculateAverageOccupancy();
 

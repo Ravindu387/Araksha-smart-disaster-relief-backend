@@ -2,24 +2,29 @@ package org.example.arakshasmartdisasterreliefbackend.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
 public class ShelterRequestDTO {
-    private String shelterName;
+    private Integer id;
+
+    private String name;
 
     private String address;
 
-    private Integer totalCapacity;
+    private Integer capacity;
 
-    private Integer occupiedBeds;
+    private Integer occupied;
 
+    private String status;
 
-    private Double latitude;
+    private String amenities;
 
-    private Double longitude;
+    private BigDecimal latitude;
 
-    private Boolean wifi;
+    private BigDecimal longitude;
 
-    private Boolean power;
-
-    private Boolean water;
+    private LocalDateTime lastUpdated;
 }

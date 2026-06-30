@@ -2,8 +2,8 @@ package org.example.arakshasmartdisasterreliefbackend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.arakshasmartdisasterreliefbackend.dto.request.ShelterRequestDTO;
-import org.example.arakshasmartdisasterreliefbackend.entity.Shelter;
-import org.example.arakshasmartdisasterreliefbackend.service.impl.ShelterServiceImpl;
+import org.example.arakshasmartdisasterreliefbackend.service.ShelterService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,32 +11,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shelters")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin
 public class ShelterController {
-    private final ShelterServiceImpl shelterService;
+
+    private final ShelterService shelterService;
 
     @PostMapping
-    public Shelter save(@RequestBody ShelterRequestDTO dto) {
-        return shelterService.registerShelter(dto);
+    public ResponseEntity<ShelterRequestDTO> save(@RequestBody ShelterRequestDTO dto) {
+        return ResponseEntity.ok(shelterService.save(dto));
     }
 
     @GetMapping
-    public List<Shelter> getAll() {
-        return shelterService.getAllShelters();
+    public ResponseEntity<List<ShelterRequestDTO>> getAll() {
+        return ResponseEntity.ok(shelterService.getAll());
     }
 
-    @GetMapping("/search")
-    public List<Shelter> search(@RequestParam String keyword) {
-        return shelterService.searchShelters(keyword);
+    @GetMapping("/{id}")
+    public ResponseEntity<ShelterRequestDTO> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(shelterService.getById(id));
     }
 
-    @GetMapping("/status/{status}")
-    public List<Shelter> filter(@PathVariable String status) {
-        return shelterService.getSheltersByStatus(status);
+    @PutMapping("/{id}")
+    public ResponseEntity<ShelterRequestDTO> update(
+            @PathVariable Integer id,
+            @RequestBody ShelterRequestDTO dto) {
+
+        return ResponseEntity.ok(shelterService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        shelterService.deleteShelter(id);
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+
+        shelterService.delete(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

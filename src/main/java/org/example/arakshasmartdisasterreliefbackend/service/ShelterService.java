@@ -1,14 +1,18 @@
 package org.example.arakshasmartdisasterreliefbackend.service;
 
 import org.example.arakshasmartdisasterreliefbackend.dto.request.ShelterRequestDTO;
-import org.example.arakshasmartdisasterreliefbackend.entity.Shelter;
 
 import java.util.List;
 
 public interface ShelterService {
-    Shelter registerShelter(ShelterRequestDTO dto);
-    List<Shelter> getAllShelters();
-    List<Shelter> searchShelters(String keyword);
-    List<Shelter> getSheltersByStatus(String status);
-    void deleteShelter(Long id);
+
+    ShelterRequestDTO save(ShelterRequestDTO dto);
+
+    List<ShelterRequestDTO> getAll();
+
+    void delete(Integer id);
+
+    ShelterRequestDTO update(Integer id, ShelterRequestDTO dto);
+
+    ShelterRequestDTO getById(Integer id);
 }

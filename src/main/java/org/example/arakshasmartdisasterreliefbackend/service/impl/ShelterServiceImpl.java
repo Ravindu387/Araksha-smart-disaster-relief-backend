@@ -13,59 +13,91 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ShelterServiceImpl implements ShelterService {
-    private final ShelterRepository shelterRepository;
+
+    private final ShelterRepository repository;
+
     @Override
-    public Shelter registerShelter(ShelterRequestDTO dto) {
-        Shelter shelter = new Shelter();
+    public ShelterRequestDTO save(ShelterRequestDTO dto) {
 
-        shelter.setName(dto.getShelterName());
+        Shelter shelter = Shelter.builder()
+                .name(dto.getName())
+                .address(dto.getAddress())
+                .capacity(dto.getCapacity())
+                .occupied(dto.getOccupied())
+                .status(calculateStatus(dto.getCapacity(), dto.getOccupied()))
+                .amenities(dto.getAmenities())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
+                .build();
+
+        repository.save(shelter);
+
+        return toDto(repository.findById(shelter.getId()).orElse(shelter));
+    }
+
+    @Override
+    public List<ShelterRequestDTO> getAll() {
+        return repository.findAll().stream().map(this::toDto).toList();
+    }
+
+    @Override
+    public ShelterRequestDTO update(Integer id, ShelterRequestDTO dto) {
+
+        Shelter shelter = repository.findById(id).orElseThrow();
+
+        shelter.setName(dto.getName());
         shelter.setAddress(dto.getAddress());
-
-        shelter.setTotalCapacity(dto.getTotalCapacity());
-        shelter.setOccupiedBeds(dto.getOccupiedBeds());
-
-
-        double percentage =
-                (dto.getOccupiedBeds() * 100.0) / dto.getTotalCapacity();
-
-        if (percentage >= 100) {
-            shelter.setStatus("Full");
-        } else if (percentage >= 80) {
-            shelter.setStatus("Limited");
-        } else {
-            shelter.setStatus("Available");
-        }
-
+        shelter.setCapacity(dto.getCapacity());
+        shelter.setOccupied(dto.getOccupied());
+        shelter.setAmenities(dto.getAmenities());
         shelter.setLatitude(dto.getLatitude());
         shelter.setLongitude(dto.getLongitude());
+        shelter.setStatus(calculateStatus(dto.getCapacity(), dto.getOccupied()));
 
-        shelter.setWifi(dto.getWifi());
-        shelter.setElectricity(
-                dto.getPower());
-        shelter.setWater(dto.getWater());
+        repository.save(shelter);
 
-        shelter.setLastUpdated(LocalDateTime.now());
-
-        return shelterRepository.save(shelter);
+        return toDto(repository.findById(id).orElse(shelter));
     }
 
     @Override
-    public List<Shelter> getAllShelters() {
-        return shelterRepository.findAll();
+    public void delete(Integer id) {
+        repository.deleteById(id);
     }
 
     @Override
-    public List<Shelter> searchShelters(String keyword) {
-        return shelterRepository.findByNameContainingIgnoreCase(keyword);
+    public ShelterRequestDTO getById(Integer id) {
+        Shelter shelter = repository.findById(id).orElseThrow();
+        return toDto(shelter);
     }
 
-    @Override
-    public List<Shelter> getSheltersByStatus(String status) {
-        return shelterRepository.findByStatus(status);
+    private ShelterRequestDTO toDto(Shelter shelter) {
+
+        ShelterRequestDTO dto = new ShelterRequestDTO();
+
+        dto.setId(shelter.getId());
+        dto.setName(shelter.getName());
+        dto.setAddress(shelter.getAddress());
+        dto.setCapacity(shelter.getCapacity());
+        dto.setOccupied(shelter.getOccupied());
+        dto.setStatus(shelter.getStatus());
+        dto.setAmenities(shelter.getAmenities());
+        dto.setLatitude(shelter.getLatitude());
+        dto.setLongitude(shelter.getLongitude());
+        dto.setLastUpdated(shelter.getLastUpdated());
+
+        return dto;
     }
 
-    @Override
-    public void deleteShelter(Long id) {
-        shelterRepository.deleteById(id);
+    private String calculateStatus(int capacity, int occupied) {
+
+        double percentage = ((double) occupied / capacity) * 100;
+
+        if (percentage >= 100)
+            return "Full";
+
+        if (percentage >= 80)
+            return "Limited";
+
+        return "Available";
     }
 }
