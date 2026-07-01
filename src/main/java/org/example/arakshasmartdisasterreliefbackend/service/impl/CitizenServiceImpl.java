@@ -38,6 +38,11 @@ public class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
+    public Optional<Citizen> getCitizenByEmail(String email) {
+        return citizenRepository.findByEmail(email);
+    }
+
+    @Override
     public Citizen updateCitizen(Long id, Citizen citizen) {
 
         Citizen existing = citizenRepository.findById(id)

@@ -23,11 +23,15 @@ public class DataInitializer implements CommandLineRunner {
     private final NeedRepository needRepository;
     private final EmergencyNeedRepository emergencyNeedRepository;
     private final NotificationRepository notificationRepository;
-    private final IncidentRepository incidentRepository;
-    private final PerformanceRepository performanceRepository;
+    private final CitizenRepository citizenRepository;
 
     @Override
     public void run(String... args) throws Exception {
+
+        if (citizenRepository.count() == 0) {
+            Citizen alice = new Citizen("Alice Smith", "alice@example.com", "+1 (555) 019-2834", "120 Houston Ave, Houston, TX", "password123");
+            citizenRepository.save(alice);
+        }
 
         if (shelterRepository.count() == 0) {
             shelterRepository.save(Shelter.builder()
@@ -208,53 +212,6 @@ public class DataInitializer implements CommandLineRunner {
             n7.setTime("25 min ago");
             n7.setRead(false);
             notificationRepository.save(n7);
-        }
-
-        if (incidentRepository.count() == 0) {
-            // Seed 2025 trends
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", LocalDateTime.of(2025, 1, 10, 10, 0), LocalDateTime.of(2025, 1, 10, 10, 45), 45));
-            incidentRepository.save(new Incident(null, "FIRE", "RESOLVED", LocalDateTime.of(2025, 1, 15, 12, 0), LocalDateTime.of(2025, 1, 15, 12, 30), 30));
-            incidentRepository.save(new Incident(null, "HURRICANE", "RESOLVED", LocalDateTime.of(2025, 1, 20, 8, 0), LocalDateTime.of(2025, 1, 20, 9, 15), 75));
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", LocalDateTime.of(2025, 2, 5, 14, 0), LocalDateTime.of(2025, 2, 5, 14, 40), 40));
-            incidentRepository.save(new Incident(null, "FIRE", "RESOLVED", LocalDateTime.of(2025, 2, 12, 16, 0), LocalDateTime.of(2025, 2, 12, 16, 25), 25));
-            incidentRepository.save(new Incident(null, "EARTHQUAKE", "RESOLVED", LocalDateTime.of(2025, 2, 22, 9, 0), LocalDateTime.of(2025, 2, 22, 10, 20), 80));
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", LocalDateTime.of(2025, 3, 3, 11, 0), LocalDateTime.of(2025, 3, 3, 11, 35), 35));
-            incidentRepository.save(new Incident(null, "HURRICANE", "RESOLVED", LocalDateTime.of(2025, 3, 14, 15, 0), LocalDateTime.of(2025, 3, 14, 16, 10), 70));
-            incidentRepository.save(new Incident(null, "MEDICAL", "RESOLVED", LocalDateTime.of(2025, 3, 25, 10, 0), LocalDateTime.of(2025, 3, 25, 10, 15), 15));
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", LocalDateTime.of(2025, 4, 8, 9, 0), LocalDateTime.of(2025, 4, 8, 9, 30), 30));
-            incidentRepository.save(new Incident(null, "EARTHQUAKE", "RESOLVED", LocalDateTime.of(2025, 4, 18, 14, 0), LocalDateTime.of(2025, 4, 18, 15, 10), 70));
-            incidentRepository.save(new Incident(null, "OTHER", "RESOLVED", LocalDateTime.of(2025, 4, 28, 16, 0), LocalDateTime.of(2025, 4, 28, 16, 50), 50));
-            incidentRepository.save(new Incident(null, "FIRE", "RESOLVED", LocalDateTime.of(2025, 5, 2, 13, 0), LocalDateTime.of(2025, 5, 2, 13, 20), 20));
-            incidentRepository.save(new Incident(null, "HURRICANE", "RESOLVED", LocalDateTime.of(2025, 5, 15, 7, 0), LocalDateTime.of(2025, 5, 15, 8, 10), 70));
-            incidentRepository.save(new Incident(null, "MEDICAL", "RESOLVED", LocalDateTime.of(2025, 5, 24, 11, 0), LocalDateTime.of(2025, 5, 24, 11, 12), 12));
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", LocalDateTime.of(2025, 6, 4, 15, 0), LocalDateTime.of(2025, 6, 4, 15, 25), 25));
-            incidentRepository.save(new Incident(null, "EARTHQUAKE", "RESOLVED", LocalDateTime.of(2025, 6, 17, 10, 0), LocalDateTime.of(2025, 6, 17, 11, 0), 60));
-            incidentRepository.save(new Incident(null, "MEDICAL", "RESOLVED", LocalDateTime.of(2025, 6, 29, 9, 0), LocalDateTime.of(2025, 6, 29, 9, 10), 10));
-
-            // Seed Last 30 Days
-            LocalDateTime now = LocalDateTime.now();
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", now.minusDays(5), now.minusDays(5).plusMinutes(25), 25));
-            incidentRepository.save(new Incident(null, "FIRE", "RESOLVED", now.minusDays(10), now.minusDays(10).plusMinutes(15), 15));
-            incidentRepository.save(new Incident(null, "MEDICAL", "RESOLVED", now.minusDays(15), now.minusDays(15).plusMinutes(10), 10));
-            incidentRepository.save(new Incident(null, "OTHER", "RESOLVED", now.minusDays(20), now.minusDays(20).plusMinutes(40), 40));
-            incidentRepository.save(new Incident(null, "FLOOD", "OPEN", now.minusDays(2), null, null));
-            incidentRepository.save(new Incident(null, "HURRICANE", "OPEN", now.minusDays(1), null, null));
-
-            // Seed Previous 30 Days
-            incidentRepository.save(new Incident(null, "FLOOD", "RESOLVED", now.minusDays(40), now.minusDays(40).plusMinutes(35), 35));
-            incidentRepository.save(new Incident(null, "FIRE", "RESOLVED", now.minusDays(45), now.minusDays(45).plusMinutes(20), 20));
-            incidentRepository.save(new Incident(null, "MEDICAL", "RESOLVED", now.minusDays(50), now.minusDays(50).plusMinutes(15), 15));
-        }
-
-        if (performanceRepository.count() == 0) {
-            java.util.List<Volunteer> vols = volunteerRepository.findAll();
-            if (!vols.isEmpty()) {
-                performanceRepository.save(Performance.builder().volunteer(vols.get(0)).response(95).feedback(98).completion(92).communication(12).safety(96).build());
-                if (vols.size() > 1) performanceRepository.save(Performance.builder().volunteer(vols.get(1)).response(88).feedback(90).completion(85).communication(18).safety(92).build());
-                if (vols.size() > 2) performanceRepository.save(Performance.builder().volunteer(vols.get(2)).response(92).feedback(94).completion(90).communication(14).safety(94).build());
-                if (vols.size() > 3) performanceRepository.save(Performance.builder().volunteer(vols.get(3)).response(85).feedback(87).completion(80).communication(22).safety(88).build());
-                if (vols.size() > 4) performanceRepository.save(Performance.builder().volunteer(vols.get(4)).response(97).feedback(99).completion(95).communication(8).safety(98).build());
-            }
         }
     }
 }

@@ -43,6 +43,16 @@ public class CitizenController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // READ BY EMAIL
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Citizen> getCitizenByEmail(@PathVariable String email) {
+
+        Optional<Citizen> citizen = citizenService.getCitizenByEmail(email);
+
+        return citizen.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<Citizen> updateCitizen(
