@@ -10,6 +10,6 @@ public interface ShelterService {
     List<Shelter> getAllShelters();
     List<Shelter> searchShelters(String keyword);
     List<Shelter> getSheltersByStatus(String status);
-    void deleteShelter(Long id);
-    Shelter updateShelter(Long id, ShelterRequestDTO dto);
+    void deleteShelter(Integer id);
+    Shelter updateShelter(Integer id, ShelterRequestDTO dto);
 }

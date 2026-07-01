@@ -21,15 +21,15 @@ public class ShelterServiceImpl implements ShelterService {
     public Shelter registerShelter(ShelterRequestDTO dto) {
         Shelter shelter = new Shelter();
 
-        shelter.setName(dto.getShelterName());
+        shelter.setName(dto.getName());
         shelter.setAddress(dto.getAddress());
 
-        shelter.setTotalCapacity(dto.getTotalCapacity());
-        shelter.setOccupiedBeds(dto.getOccupiedBeds());
+        shelter.setCapacity(dto.getCapacity());
+        shelter.setOccupied(dto.getOccupied());
 
 
         double percentage =
-                (dto.getOccupiedBeds() * 100.0) / dto.getTotalCapacity();
+                (dto.getOccupied() * 100.0) / dto.getCapacity();
 
         if (percentage >= 100) {
             shelter.setStatus("Full");
@@ -42,10 +42,7 @@ public class ShelterServiceImpl implements ShelterService {
         shelter.setLatitude(dto.getLatitude());
         shelter.setLongitude(dto.getLongitude());
 
-        shelter.setWifi(dto.getWifi());
-        shelter.setElectricity(
-                dto.getPower());
-        shelter.setWater(dto.getWater());
+        shelter.setAmenities(dto.getAmenities());
 
         shelter.setLastUpdated(LocalDateTime.now());
 
@@ -57,8 +54,8 @@ public class ShelterServiceImpl implements ShelterService {
         n.setSeverity("info");
         n.setTitle("New Shelter Registered: " + saved.getName());
         n.setBadge("Info");
-        int freeBeds = saved.getTotalCapacity() - saved.getOccupiedBeds();
-        n.setDescription(saved.getName() + " registered at " + saved.getAddress() + ". Capacity: " + saved.getTotalCapacity() + " beds (" + freeBeds + " free). Status: " + saved.getStatus() + ".");
+        int freeBeds = saved.getCapacity() - saved.getOccupied();
+        n.setDescription(saved.getName() + " registered at " + saved.getAddress() + ". Capacity: " + saved.getCapacity() + " beds (" + freeBeds + " free). Status: " + saved.getStatus() + ".");
         n.setTime("Just now");
         n.setRead(false);
         notificationRepository.save(n);
@@ -82,21 +79,21 @@ public class ShelterServiceImpl implements ShelterService {
     }
 
     @Override
-    public void deleteShelter(Long id) {
+    public void deleteShelter(Integer id) {
         shelterRepository.deleteById(id);
     }
 
     @Override
-    public Shelter updateShelter(Long id, ShelterRequestDTO dto) {
+    public Shelter updateShelter(Integer id, ShelterRequestDTO dto) {
         Shelter shelter = shelterRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Shelter not found"));
 
-        shelter.setName(dto.getShelterName());
+        shelter.setName(dto.getName());
         shelter.setAddress(dto.getAddress());
-        shelter.setTotalCapacity(dto.getTotalCapacity());
-        shelter.setOccupiedBeds(dto.getOccupiedBeds());
+        shelter.setCapacity(dto.getCapacity());
+        shelter.setOccupied(dto.getOccupied());
 
-        double percentage = (dto.getOccupiedBeds() * 100.0) / dto.getTotalCapacity();
+        double percentage = (dto.getOccupied() * 100.0) / dto.getCapacity();
         if (percentage >= 100) {
             shelter.setStatus("Full");
         } else if (percentage >= 80) {
@@ -107,9 +104,7 @@ public class ShelterServiceImpl implements ShelterService {
 
         shelter.setLatitude(dto.getLatitude());
         shelter.setLongitude(dto.getLongitude());
-        shelter.setWifi(dto.getWifi());
-        shelter.setElectricity(dto.getPower());
-        shelter.setWater(dto.getWater());
+        shelter.setAmenities(dto.getAmenities());
         shelter.setLastUpdated(LocalDateTime.now());
 
         Shelter updated = shelterRepository.save(shelter);
@@ -122,8 +117,8 @@ public class ShelterServiceImpl implements ShelterService {
         n.setSeverity(severity);
         n.setTitle("Shelter Updated: " + updated.getName());
         n.setBadge(badge);
-        int freeBeds = updated.getTotalCapacity() - updated.getOccupiedBeds();
-        n.setDescription(updated.getName() + " updated. " + freeBeds + " of " + updated.getTotalCapacity() + " beds free. Status: " + updated.getStatus() + ".");
+        int freeBeds = updated.getCapacity() - updated.getOccupied();
+        n.setDescription(updated.getName() + " updated. " + freeBeds + " of " + updated.getCapacity() + " beds free. Status: " + updated.getStatus() + ".");
         n.setTime("Just now");
         n.setRead(false);
         notificationRepository.save(n);

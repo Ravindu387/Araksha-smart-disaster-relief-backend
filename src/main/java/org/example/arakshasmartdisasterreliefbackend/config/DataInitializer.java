@@ -6,6 +6,7 @@ import org.example.arakshasmartdisasterreliefbackend.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,9 +28,39 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // 1. Seed Shelters
         if (shelterRepository.count() == 0) {
-            shelterRepository.save(new Shelter(null, "Houston Community Center", "Houston, TX", "Houston", 29.76, -95.36, 100, 32, true, true, true, "Available", LocalDateTime.now()));
-            shelterRepository.save(new Shelter(null, "Denver Red Cross Hub", "Denver, CO", "Denver", 39.73, -104.99, 300, 80, true, true, true, "Available", LocalDateTime.now()));
-            shelterRepository.save(new Shelter(null, "Chicago Metro Shelter", "Chicago, IL", "Chicago", 41.87, -87.62, 250, 39, true, true, true, "Available", LocalDateTime.now()));
+            shelterRepository.save(Shelter.builder()
+                    .name("Houston Community Center")
+                    .address("Houston, TX")
+                    .capacity(100)
+                    .occupied(32)
+                    .status("Available")
+                    .amenities("Wifi, Power, Water")
+                    .latitude(BigDecimal.valueOf(29.76))
+                    .longitude(BigDecimal.valueOf(-95.36))
+                    .lastUpdated(LocalDateTime.now())
+                    .build());
+            shelterRepository.save(Shelter.builder()
+                    .name("Denver Red Cross Hub")
+                    .address("Denver, CO")
+                    .capacity(300)
+                    .occupied(80)
+                    .status("Available")
+                    .amenities("Wifi, Power, Water")
+                    .latitude(BigDecimal.valueOf(39.73))
+                    .longitude(BigDecimal.valueOf(-104.99))
+                    .lastUpdated(LocalDateTime.now())
+                    .build());
+            shelterRepository.save(Shelter.builder()
+                    .name("Chicago Metro Shelter")
+                    .address("Chicago, IL")
+                    .capacity(250)
+                    .occupied(39)
+                    .status("Available")
+                    .amenities("Wifi, Power, Water")
+                    .latitude(BigDecimal.valueOf(41.87))
+                    .longitude(BigDecimal.valueOf(-87.62))
+                    .lastUpdated(LocalDateTime.now())
+                    .build());
         }
 
         // 2. Seed Inventory

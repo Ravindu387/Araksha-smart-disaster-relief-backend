@@ -36,12 +36,12 @@ public class ShelterController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         shelterService.deleteShelter(id);
     }
 
     @PutMapping("/{id}")
-    public Shelter update(@PathVariable Long id, @RequestBody ShelterRequestDTO dto) {
+    public Shelter update(@PathVariable Integer id, @RequestBody ShelterRequestDTO dto) {
         return shelterService.updateShelter(id, dto);
     }
 }
