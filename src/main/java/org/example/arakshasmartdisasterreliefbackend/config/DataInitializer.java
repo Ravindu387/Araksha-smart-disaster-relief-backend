@@ -26,7 +26,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 1. Seed Shelters
+
         if (shelterRepository.count() == 0) {
             shelterRepository.save(Shelter.builder()
                     .name("Houston Community Center")
@@ -63,14 +63,14 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
         }
 
-        // 2. Seed Inventory
+
         if (inventoryRepository.count() == 0) {
             inventoryRepository.save(new Inventory(null, "Food Kits", "Food", 8420, 10000, "kits", 1580, 1000));
             inventoryRepository.save(new Inventory(null, "Water (Liters)", "Water", 15600, 20000, "L", 4400, 2000));
             inventoryRepository.save(new Inventory(null, "Medical Kits", "Medical", 1240, 2000, "kits", 760, 500));
         }
 
-        // 3. Seed Volunteers
+
         if (volunteerRepository.count() == 0) {
             volunteerRepository.save(Volunteer.builder().name("Lisa Chen").location("Houston, TX").skills(new ArrayList<>(Arrays.asList("Medical", "Logistics"))).status("Available").rating(4.9).tasks(15).phone("555-0101").build());
             volunteerRepository.save(Volunteer.builder().name("Michael Davis").location("San Jose, CA").skills(new ArrayList<>(Arrays.asList("Search & Rescue"))).status("Available").rating(4.7).tasks(8).phone("555-0102").build());
@@ -79,7 +79,7 @@ public class DataInitializer implements CommandLineRunner {
             volunteerRepository.save(Volunteer.builder().name("James Wright").location("Houston, TX").skills(new ArrayList<>(Arrays.asList("Water Rescue", "First Aid"))).status("On Duty").rating(4.9).tasks(19).phone("555-0105").build());
         }
 
-        // 4. Seed EmergencyRequests
+
         if (requestRepository.count() == 0) {
             requestRepository.save(EmergencyRequest.builder().requestId("ER-2847").citizenName("Alice Smith").emergencyType("Flood").priority("Critical").status("Pending").location("Houston, TX").requestTime(LocalDateTime.now()).build());
             requestRepository.save(EmergencyRequest.builder().requestId("ER-2844").citizenName("Bob Jones").emergencyType("Earthquake").priority("Critical").status("Pending").location("San Jose, CA").requestTime(LocalDateTime.now()).build());
@@ -87,7 +87,7 @@ public class DataInitializer implements CommandLineRunner {
             requestRepository.save(EmergencyRequest.builder().requestId("ER-2841").citizenName("David Miller").emergencyType("Flood").priority("Medium").status("Pending").location("Phoenix, AZ").requestTime(LocalDateTime.now()).build());
         }
 
-        // 5. Seed Allocations
+
         if (allocationRepository.count() == 0) {
             allocationRepository.save(new Allocation(null, "James Wright assigned to ER-2843 (Hurricane, Miami)", "14:38", "volunteer"));
             allocationRepository.save(new Allocation(null, "Food Kits (200 units) dispatched to ER-2843 (Miami)", "14:22", "resource"));
@@ -96,7 +96,6 @@ public class DataInitializer implements CommandLineRunner {
             allocationRepository.save(new Allocation(null, "Water supply (5,000L) dispatched from Phoenix depot", "13:12", "resource"));
         }
 
-        // 6. Seed Needs and Emergency Needs
         if (needRepository.count() == 0) {
             Need waterRescue = needRepository.save(new Need(null, "Water Rescue", "Water rescue equipment and personnel"));
             Need foodKits = needRepository.save(new Need(null, "Food Kits", "Emergency food supplies"));
@@ -132,9 +131,9 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
 
-        // 7. Seed Notifications — connected to real data from other pages
+
         if (notificationRepository.count() == 0) {
-            // Alerts — from Emergency Requests
+
             Notification n1 = new Notification();
             n1.setCategory("alerts");
             n1.setSeverity("critical");
@@ -155,7 +154,7 @@ public class DataInitializer implements CommandLineRunner {
             n2.setRead(false);
             notificationRepository.save(n2);
 
-            // Assignments — from Volunteers + Emergency Requests
+
             Notification n3 = new Notification();
             n3.setCategory("assignments");
             n3.setSeverity("info");
@@ -176,7 +175,7 @@ public class DataInitializer implements CommandLineRunner {
             n4.setRead(false);
             notificationRepository.save(n4);
 
-            // Inventory — from Inventory levels
+
             Notification n5 = new Notification();
             n5.setCategory("inventory");
             n5.setSeverity("critical");
@@ -197,7 +196,7 @@ public class DataInitializer implements CommandLineRunner {
             n6.setRead(false);
             notificationRepository.save(n6);
 
-            // Shelters — from Shelter capacity
+
             Notification n7 = new Notification();
             n7.setCategory("shelters");
             n7.setSeverity("high");
