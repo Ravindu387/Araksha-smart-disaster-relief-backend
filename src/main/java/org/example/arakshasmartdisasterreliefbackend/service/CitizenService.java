@@ -13,6 +13,8 @@ public interface CitizenService {
 
     Optional<Citizen> getCitizenById(Long id);
 
+    Optional<Citizen> getCitizenByEmail(String email);
+
     Citizen updateCitizen(Long id, Citizen citizen);
 
     void deleteCitizen(Long id);

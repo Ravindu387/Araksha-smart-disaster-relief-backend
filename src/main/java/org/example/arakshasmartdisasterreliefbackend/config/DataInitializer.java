@@ -23,9 +23,15 @@ public class DataInitializer implements CommandLineRunner {
     private final NeedRepository needRepository;
     private final EmergencyNeedRepository emergencyNeedRepository;
     private final NotificationRepository notificationRepository;
+    private final CitizenRepository citizenRepository;
 
     @Override
     public void run(String... args) throws Exception {
+
+        if (citizenRepository.count() == 0) {
+            Citizen alice = new Citizen("Alice Smith", "alice@example.com", "+1 (555) 019-2834", "120 Houston Ave, Houston, TX", "password123");
+            citizenRepository.save(alice);
+        }
 
         if (shelterRepository.count() == 0) {
             shelterRepository.save(Shelter.builder()
