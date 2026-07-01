@@ -2,7 +2,9 @@ package org.example.arakshasmartdisasterreliefbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.arakshasmartdisasterreliefbackend.dto.request.ShelterRequestDTO;
+import org.example.arakshasmartdisasterreliefbackend.entity.Notification;
 import org.example.arakshasmartdisasterreliefbackend.entity.Shelter;
+import org.example.arakshasmartdisasterreliefbackend.repository.NotificationRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.ShelterRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.ShelterService;
 import org.springframework.stereotype.Service;
@@ -13,91 +15,119 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ShelterServiceImpl implements ShelterService {
-
-    private final ShelterRepository repository;
-
+    private final ShelterRepository shelterRepository;
+    private final NotificationRepository notificationRepository;
     @Override
-    public ShelterRequestDTO save(ShelterRequestDTO dto) {
+    public Shelter registerShelter(ShelterRequestDTO dto) {
+        Shelter shelter = new Shelter();
 
-        Shelter shelter = Shelter.builder()
-                .name(dto.getName())
-                .address(dto.getAddress())
-                .capacity(dto.getCapacity())
-                .occupied(dto.getOccupied())
-                .status(calculateStatus(dto.getCapacity(), dto.getOccupied()))
-                .amenities(dto.getAmenities())
-                .latitude(dto.getLatitude())
-                .longitude(dto.getLongitude())
-                .build();
-
-        repository.save(shelter);
-
-        return toDto(repository.findById(shelter.getId()).orElse(shelter));
-    }
-
-    @Override
-    public List<ShelterRequestDTO> getAll() {
-        return repository.findAll().stream().map(this::toDto).toList();
-    }
-
-    @Override
-    public ShelterRequestDTO update(Integer id, ShelterRequestDTO dto) {
-
-        Shelter shelter = repository.findById(id).orElseThrow();
-
-        shelter.setName(dto.getName());
+        shelter.setName(dto.getShelterName());
         shelter.setAddress(dto.getAddress());
-        shelter.setCapacity(dto.getCapacity());
-        shelter.setOccupied(dto.getOccupied());
-        shelter.setAmenities(dto.getAmenities());
+
+        shelter.setTotalCapacity(dto.getTotalCapacity());
+        shelter.setOccupiedBeds(dto.getOccupiedBeds());
+
+
+        double percentage =
+                (dto.getOccupiedBeds() * 100.0) / dto.getTotalCapacity();
+
+        if (percentage >= 100) {
+            shelter.setStatus("Full");
+        } else if (percentage >= 80) {
+            shelter.setStatus("Limited");
+        } else {
+            shelter.setStatus("Available");
+        }
+
         shelter.setLatitude(dto.getLatitude());
         shelter.setLongitude(dto.getLongitude());
-        shelter.setStatus(calculateStatus(dto.getCapacity(), dto.getOccupied()));
 
-        repository.save(shelter);
+        shelter.setWifi(dto.getWifi());
+        shelter.setElectricity(
+                dto.getPower());
+        shelter.setWater(dto.getWater());
 
-        return toDto(repository.findById(id).orElse(shelter));
+        shelter.setLastUpdated(LocalDateTime.now());
+
+        Shelter saved = shelterRepository.save(shelter);
+
+        // Auto-create notification
+        Notification n = new Notification();
+        n.setCategory("shelters");
+        n.setSeverity("info");
+        n.setTitle("New Shelter Registered: " + saved.getName());
+        n.setBadge("Info");
+        int freeBeds = saved.getTotalCapacity() - saved.getOccupiedBeds();
+        n.setDescription(saved.getName() + " registered at " + saved.getAddress() + ". Capacity: " + saved.getTotalCapacity() + " beds (" + freeBeds + " free). Status: " + saved.getStatus() + ".");
+        n.setTime("Just now");
+        n.setRead(false);
+        notificationRepository.save(n);
+
+        return saved;
     }
 
     @Override
-    public void delete(Integer id) {
-        repository.deleteById(id);
+    public List<Shelter> getAllShelters() {
+        return shelterRepository.findAll();
     }
 
     @Override
-    public ShelterRequestDTO getById(Integer id) {
-        Shelter shelter = repository.findById(id).orElseThrow();
-        return toDto(shelter);
+    public List<Shelter> searchShelters(String keyword) {
+        return shelterRepository.findByNameContainingIgnoreCase(keyword);
     }
 
-    private ShelterRequestDTO toDto(Shelter shelter) {
-
-        ShelterRequestDTO dto = new ShelterRequestDTO();
-
-        dto.setId(shelter.getId());
-        dto.setName(shelter.getName());
-        dto.setAddress(shelter.getAddress());
-        dto.setCapacity(shelter.getCapacity());
-        dto.setOccupied(shelter.getOccupied());
-        dto.setStatus(shelter.getStatus());
-        dto.setAmenities(shelter.getAmenities());
-        dto.setLatitude(shelter.getLatitude());
-        dto.setLongitude(shelter.getLongitude());
-        dto.setLastUpdated(shelter.getLastUpdated());
-
-        return dto;
+    @Override
+    public List<Shelter> getSheltersByStatus(String status) {
+        return shelterRepository.findByStatus(status);
     }
 
-    private String calculateStatus(int capacity, int occupied) {
+    @Override
+    public void deleteShelter(Long id) {
+        shelterRepository.deleteById(id);
+    }
 
-        double percentage = ((double) occupied / capacity) * 100;
+    @Override
+    public Shelter updateShelter(Long id, ShelterRequestDTO dto) {
+        Shelter shelter = shelterRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Shelter not found"));
 
-        if (percentage >= 100)
-            return "Full";
+        shelter.setName(dto.getShelterName());
+        shelter.setAddress(dto.getAddress());
+        shelter.setTotalCapacity(dto.getTotalCapacity());
+        shelter.setOccupiedBeds(dto.getOccupiedBeds());
 
-        if (percentage >= 80)
-            return "Limited";
+        double percentage = (dto.getOccupiedBeds() * 100.0) / dto.getTotalCapacity();
+        if (percentage >= 100) {
+            shelter.setStatus("Full");
+        } else if (percentage >= 80) {
+            shelter.setStatus("Limited");
+        } else {
+            shelter.setStatus("Available");
+        }
 
-        return "Available";
+        shelter.setLatitude(dto.getLatitude());
+        shelter.setLongitude(dto.getLongitude());
+        shelter.setWifi(dto.getWifi());
+        shelter.setElectricity(dto.getPower());
+        shelter.setWater(dto.getWater());
+        shelter.setLastUpdated(LocalDateTime.now());
+
+        Shelter updated = shelterRepository.save(shelter);
+
+        // Auto-create notification
+        String severity = "Full".equals(updated.getStatus()) ? "critical" : "Limited".equals(updated.getStatus()) ? "high" : "info";
+        String badge = "Full".equals(updated.getStatus()) ? "Critical" : "Limited".equals(updated.getStatus()) ? "High" : "Info";
+        Notification n = new Notification();
+        n.setCategory("shelters");
+        n.setSeverity(severity);
+        n.setTitle("Shelter Updated: " + updated.getName());
+        n.setBadge(badge);
+        int freeBeds = updated.getTotalCapacity() - updated.getOccupiedBeds();
+        n.setDescription(updated.getName() + " updated. " + freeBeds + " of " + updated.getTotalCapacity() + " beds free. Status: " + updated.getStatus() + ".");
+        n.setTime("Just now");
+        n.setRead(false);
+        notificationRepository.save(n);
+
+        return updated;
     }
 }

@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestRequest;
 import org.example.arakshasmartdisasterreliefbackend.dto.response.EmergencyRequestResponse;
 import org.example.arakshasmartdisasterreliefbackend.entity.EmergencyRequest;
+import org.example.arakshasmartdisasterreliefbackend.entity.EmergencyNeed;
+import org.example.arakshasmartdisasterreliefbackend.entity.Notification;
 import org.example.arakshasmartdisasterreliefbackend.repository.EmergencyRequestRepository;
+import org.example.arakshasmartdisasterreliefbackend.repository.NotificationRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.EmergencyRequestService;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import java.util.List;
 public class EmergencyRequestServiceImpl implements EmergencyRequestService {
 
     private final EmergencyRequestRepository repository;
+    private final NotificationRepository notificationRepository;
 
     @Override
     public EmergencyRequestResponse createEmergencyRequest(EmergencyRequestRequest request) {
@@ -32,6 +36,23 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 .build();
 
         EmergencyRequest saved = repository.save(emergencyRequest);
+
+        // Auto-create notification
+        String severity = "Critical".equals(saved.getPriority()) ? "critical"
+                : "High".equals(saved.getPriority()) ? "high" : "info";
+        String badge = "Critical".equals(saved.getPriority()) ? "Critical"
+                : "High".equals(saved.getPriority()) ? "High" : "Info";
+        Notification n = new Notification();
+        n.setCategory("alerts");
+        n.setSeverity(severity);
+        n.setTitle("New Emergency: " + saved.getEmergencyType() + " — " + saved.getLocation());
+        n.setBadge(badge);
+        n.setDescription(saved.getCitizenName() + " reported a " + saved.getEmergencyType()
+                + " emergency at " + saved.getLocation() + ". Request ID: " + saved.getRequestId()
+                + ". Priority: " + saved.getPriority() + ".");
+        n.setTime("Just now");
+        n.setRead(false);
+        notificationRepository.save(n);
 
         return mapToResponse(saved);
     }
@@ -83,6 +104,14 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
     }
 
     private EmergencyRequestResponse mapToResponse(EmergencyRequest emergencyRequest) {
+        List<String> resources = new java.util.ArrayList<>();
+        if (emergencyRequest.getNeeds() != null) {
+            for (EmergencyNeed need : emergencyRequest.getNeeds()) {
+                if (need.getNeed() != null) {
+                    resources.add(need.getNeed().getName());
+                }
+            }
+        }
 
         return EmergencyRequestResponse.builder()
                 .id(emergencyRequest.getId())
@@ -94,6 +123,7 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 .location(emergencyRequest.getLocation())
                 .assignedVolunteer(emergencyRequest.getAssignedVolunteer())
                 .requestTime(emergencyRequest.getRequestTime())
+                .resources(resources)
                 .build();
     }
 }

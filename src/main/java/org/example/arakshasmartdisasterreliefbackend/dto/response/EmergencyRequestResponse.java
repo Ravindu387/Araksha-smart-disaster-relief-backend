@@ -3,6 +3,7 @@ package org.example.arakshasmartdisasterreliefbackend.dto.response;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,5 +29,7 @@ public class EmergencyRequestResponse {
     private String assignedVolunteer;
 
     private LocalDateTime requestTime;
+
+    private List<String> resources;
 
 }

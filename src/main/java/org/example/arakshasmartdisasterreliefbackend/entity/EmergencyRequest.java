@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "emergency_requests")
@@ -34,5 +36,13 @@ public class EmergencyRequest {
     private String assignedVolunteer;
 
     private LocalDateTime requestTime;
+
+    @OneToMany(
+            mappedBy = "emergencyRequest",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER
+    )
+    @Builder.Default
+    private List<EmergencyNeed> needs = new ArrayList<>();
 
 }
