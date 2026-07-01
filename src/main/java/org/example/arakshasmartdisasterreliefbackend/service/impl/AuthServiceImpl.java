@@ -11,11 +11,14 @@ import org.example.arakshasmartdisasterreliefbackend.service.AuthService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.example.arakshasmartdisasterreliefbackend.entity.Citizen;
+import org.example.arakshasmartdisasterreliefbackend.repository.CitizenRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
+    private final CitizenRepository citizenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     @Override
@@ -34,8 +37,25 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        return "Registration Successful";
-    }
+        /* ---------------- Save Citizen ---------------- */
+
+        Citizen citizen = new Citizen();
+
+        citizen.setFullName(request.getFirstName() + " " + request.getLastName());
+
+        citizen.setEmail(request.getEmail());
+
+        citizen.setPassword(user.getPassword());
+
+        citizen.setPhoneNumber("");
+
+        citizen.setAddress("");
+
+        citizenRepository.save(citizen);
+
+        /* ---------------------------------------------- */
+
+        return "Registration Successful";}
 
     @Override
     public LoginResponse login(LoginRequest request) {
