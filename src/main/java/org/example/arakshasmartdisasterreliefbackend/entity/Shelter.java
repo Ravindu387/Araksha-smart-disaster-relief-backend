@@ -43,7 +43,7 @@ public class Shelter {
     @Column(precision = 11, scale = 8)
     private BigDecimal longitude;
 
-    @Column(name = "last_updated", insertable = false, updatable = false)
+    @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
 
 
