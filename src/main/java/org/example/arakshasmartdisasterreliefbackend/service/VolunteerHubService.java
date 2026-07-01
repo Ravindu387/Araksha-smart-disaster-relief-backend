@@ -15,5 +15,8 @@ public interface VolunteerHubService {
     List<VolunteerHubResponse> getAll();
 
 
+    VolunteerHubResponse getByEmail(String email);
+
+
     void delete(Long id);
 }

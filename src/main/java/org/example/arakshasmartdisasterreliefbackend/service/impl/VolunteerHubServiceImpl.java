@@ -66,6 +66,13 @@ public class VolunteerHubServiceImpl implements VolunteerHubService {
 
     }
 
+    @Override
+    public VolunteerHubResponse getByEmail(String email) {
+        return repository.findByEmail(email)
+                .map(this::map)
+                .orElseThrow(() -> new RuntimeException("Volunteer not found with email: " + email));
+    }
+
     private VolunteerHubResponse map(VolunteerHub v){
 
         return VolunteerHubResponse.builder()
@@ -74,6 +81,8 @@ public class VolunteerHubServiceImpl implements VolunteerHubService {
                 .volunteerCode(v.getVolunteerCode())
                 .status(v.getStatus())
                 .available(v.getAvailable())
+                .email(v.getEmail())
+                .phone(v.getPhone())
                 .build();
 
     }

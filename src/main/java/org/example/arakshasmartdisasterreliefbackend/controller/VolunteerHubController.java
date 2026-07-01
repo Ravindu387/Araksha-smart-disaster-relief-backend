@@ -43,6 +43,14 @@ public class VolunteerHubController {
         );
 
     }
+    @GetMapping("/by-email/{email}")
+    public ResponseEntity<VolunteerHubResponse> getByEmail(
+            @PathVariable String email){
+        return ResponseEntity.ok(
+                service.getByEmail(email)
+        );
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(
             @PathVariable Long id){
