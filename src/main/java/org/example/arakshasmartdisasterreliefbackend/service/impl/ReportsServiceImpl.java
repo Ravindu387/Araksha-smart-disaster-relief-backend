@@ -119,7 +119,7 @@ public class ReportsServiceImpl implements ReportsService {
         
         long totalIncidents   = incidentRepo.countByDateRange(from, to);
         long resolvedCount    = incidentRepo.countByStatusAndDateRange("RESOLVED", from, to);
-        long activeVolunteers = volunteerRepo.countByStatusIgnoreCase("ACTIVE");
+        long activeVolunteers = volunteerRepo.countByStatusIgnoreCase("Available") + volunteerRepo.countByStatusIgnoreCase("On Duty");
         Double avgResponseRaw = incidentRepo.avgResponseTimeByDateRange(from, to);
         double avgResponse    = (avgResponseRaw != null) ? Math.round(avgResponseRaw * 10.0) / 10.0 : 0.0;
 

@@ -38,14 +38,14 @@ public class NotificationController {
     }
 
     @PutMapping("/read-all")
-    public String markAllAsRead() {
+    public org.springframework.http.ResponseEntity<Void> markAllAsRead() {
         notificationService.markAllAsRead();
-        return "All notifications marked as read.";
+        return org.springframework.http.ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public String deleteNotification(@PathVariable Long id) {
+    public org.springframework.http.ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
-        return "Notification deleted successfully.";
+        return org.springframework.http.ResponseEntity.ok().build();
     }
 }

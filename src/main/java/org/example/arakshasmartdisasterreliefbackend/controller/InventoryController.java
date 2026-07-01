@@ -43,10 +43,10 @@ public class InventoryController {
 
     // DELETE
     @DeleteMapping("/{id}")
-    public String deleteInventory(@PathVariable Long id) {
+    public org.springframework.http.ResponseEntity<Void> deleteInventory(@PathVariable Long id) {
 
         inventoryService.deleteInventory(id);
 
-        return "Inventory deleted successfully";
+        return org.springframework.http.ResponseEntity.ok().build();
     }
 }

@@ -24,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/reports")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ReportsController {
 
     private final ReportsService reportsService;
