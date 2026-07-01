@@ -24,6 +24,7 @@ public class DataInitializer implements CommandLineRunner {
     private final EmergencyNeedRepository emergencyNeedRepository;
     private final NotificationRepository notificationRepository;
     private final CitizenRepository citizenRepository;
+    private final VolunteerHubRepository volunteerHubRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -212,6 +213,29 @@ public class DataInitializer implements CommandLineRunner {
             n7.setTime("25 min ago");
             n7.setRead(false);
             notificationRepository.save(n7);
+        }
+
+        if (volunteerHubRepository.count() == 0) {
+            volunteerHubRepository.save(VolunteerHub.builder()
+                    .volunteerCode("V-0001")
+                    .name("Lisa Chen")
+                    .email("volunteer@araksha.com")
+                    .phone("555-0101")
+                    .status("Available")
+                    .available(true)
+                    .currentLatitude(29.76)
+                    .currentLongitude(-95.36)
+                    .build());
+            volunteerHubRepository.save(VolunteerHub.builder()
+                    .volunteerCode("V-0002")
+                    .name("Michael Davis")
+                    .email("michael@example.com")
+                    .phone("555-0102")
+                    .status("Available")
+                    .available(true)
+                    .currentLatitude(37.33)
+                    .currentLongitude(-121.89)
+                    .build());
         }
     }
 }

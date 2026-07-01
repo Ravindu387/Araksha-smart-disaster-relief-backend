@@ -22,4 +22,10 @@ public class VolunteerHubResponse {
 
     private Boolean available;
 
+
+    private String email;
+
+
+    private String phone;
+
 }
