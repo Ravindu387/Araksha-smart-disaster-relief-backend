@@ -12,15 +12,22 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.arakshasmartdisasterreliefbackend.entity.Citizen;
+import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
 import org.example.arakshasmartdisasterreliefbackend.repository.CitizenRepository;
+import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
+import org.example.arakshasmartdisasterreliefbackend.enums.Role;
+
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final CitizenRepository citizenRepository;
+    private final VolunteerRepository volunteerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+
     @Override
     public String register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -37,21 +44,27 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        /* ---------------- Save Citizen ---------------- */
+        /* ---------------- Save Role Entity ---------------- */
 
-        Citizen citizen = new Citizen();
-
-        citizen.setFullName(request.getFirstName() + " " + request.getLastName());
-
-        citizen.setEmail(request.getEmail());
-
-        citizen.setPassword(user.getPassword());
-
-        citizen.setPhoneNumber("");
-
-        citizen.setAddress("");
-
-        citizenRepository.save(citizen);
+        if (request.getRole() == Role.CITIZEN) {
+            Citizen citizen = new Citizen();
+            citizen.setFullName(request.getFirstName() + " " + request.getLastName());
+            citizen.setEmail(request.getEmail());
+            citizen.setPassword(user.getPassword());
+            citizen.setPhoneNumber("");
+            citizen.setAddress("");
+            citizenRepository.save(citizen);
+        } else if (request.getRole() == Role.VOLUNTEER) {
+            Volunteer volunteer = new Volunteer();
+            volunteer.setName(request.getFirstName() + " " + request.getLastName());
+            volunteer.setLocation("Houston, TX");
+            volunteer.setStatus("Available");
+            volunteer.setRating(5.0);
+            volunteer.setTasks(0);
+            volunteer.setPhone("");
+            volunteer.setSkills(new ArrayList<>());
+            volunteerRepository.save(volunteer);
+        }
 
         /* ---------------------------------------------- */
 
