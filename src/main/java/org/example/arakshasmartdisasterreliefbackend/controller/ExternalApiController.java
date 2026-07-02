@@ -160,28 +160,38 @@ public class ExternalApiController {
         String details = body;
         String lowerBody = body.toLowerCase();
 
-        if (lowerBody.contains("flood")) {
+        if (lowerBody.contains("flood") || lowerBody.contains("ගංවතුර") || lowerBody.contains("galayama") || lowerBody.contains("vellam") || lowerBody.contains("வெள்ளம்")) {
             emergencyType = "Flood";
-        } else if (lowerBody.contains("fire")) {
+        } else if (lowerBody.contains("fire") || lowerBody.contains("ගින්න") || lowerBody.contains("ginna") || lowerBody.contains("neruppu") || lowerBody.contains("நெருப்பு")) {
             emergencyType = "Fire";
-        } else if (lowerBody.contains("landslide")) {
+        } else if (lowerBody.contains("landslide") || lowerBody.contains("නායයෑම") || lowerBody.contains("nayanama") || lowerBody.contains("sarivu") || lowerBody.contains("சரிவு")) {
             emergencyType = "Landslide";
-        } else if (lowerBody.contains("medical")) {
+        } else if (lowerBody.contains("medical") || lowerBody.contains("තදබල") || lowerBody.contains("மருத்துவ")) {
             emergencyType = "Medical Emergency";
-        } else if (lowerBody.contains("earthquake")) {
+        } else if (lowerBody.contains("earthquake") || lowerBody.contains("භූමිකම්පාව") || lowerBody.contains("நிலநடுக்கம்")) {
             emergencyType = "Earthquake";
         }
 
         int atIndex = lowerBody.indexOf(" at ");
+        int prepLen = 4;
+        if (atIndex == -1) {
+            atIndex = lowerBody.indexOf(" ළඟ ");
+            prepLen = 4;
+        }
+        if (atIndex == -1) {
+            atIndex = lowerBody.indexOf(" இல் ");
+            prepLen = 5;
+        }
+
         if (atIndex != -1) {
             int endIndex = lowerBody.indexOf(" details ", atIndex);
             if (endIndex == -1) {
                 endIndex = lowerBody.indexOf(" detail ", atIndex);
             }
             if (endIndex == -1) {
-                locationStr = body.substring(atIndex + 4).trim();
+                locationStr = body.substring(atIndex + prepLen).trim();
             } else {
-                locationStr = body.substring(atIndex + 4, endIndex).trim();
+                locationStr = body.substring(atIndex + prepLen, endIndex).trim();
             }
         }
 
