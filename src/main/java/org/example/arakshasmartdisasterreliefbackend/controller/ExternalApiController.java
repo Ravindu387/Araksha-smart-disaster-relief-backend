@@ -512,6 +512,54 @@ public class ExternalApiController {
         return ResponseEntity.ok(new StringResponse(msg));
     }
 
+    @PostMapping("/volunteers/{id}/progress")
+    public ResponseEntity<StringResponse> updateVolunteerProgress(
+            @PathVariable Long id,
+            @RequestParam double currentLat,
+            @RequestParam double currentLng) {
+        
+        log.info("Telemetry updated. Volunteer ID: {} currently at ({}, {})", id, currentLat, currentLng);
+        return ResponseEntity.ok(new StringResponse("GPS telemetry registered successfully."));
+    }
+
+    @PostMapping("/alerts/broadcast")
+    public ResponseEntity<StringResponse> broadcastRadiusAlert(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam double radiusKm,
+            @RequestParam String message) {
+        
+        log.warn("🚨 Radius SMS broadcast alert request. Center: ({}, {}), Radius: {}km. Message: {}",
+                lat, lng, radiusKm, message);
+        
+        List<org.example.arakshasmartdisasterreliefbackend.entity.Citizen> citizens = citizenRepository.findAll();
+        int count = 0;
+        
+        for (org.example.arakshasmartdisasterreliefbackend.entity.Citizen citizen : citizens) {
+            if (citizen.getAddress() == null || citizen.getAddress().trim().isEmpty()) {
+                continue;
+            }
+            
+            try {
+                LatLngDTO citizenCoords = geocodingService.geocode(citizen.getAddress());
+                double dist = calculateDistance(lat, lng, citizenCoords.getLatitude(), citizenCoords.getLongitude());
+                if (dist <= radiusKm) {
+                    smsService.sendSms(
+                            citizen.getPhoneNumber() != null ? citizen.getPhoneNumber() : "+94770000000",
+                            "🚨 Araksha Local Emergency Alert: " + message
+                      );
+                      count++;
+                }
+            } catch (Exception e) {
+                log.error("Failed to parse address for citizen {}: {}", citizen.getFullName(), e.getMessage());
+            }
+        }
+        
+        String responseMsg = String.format("Radius broadcast completed. Notified %d citizens within %s km radius.", count, radiusKm);
+        log.info(responseMsg);
+        return ResponseEntity.ok(new StringResponse(responseMsg));
+    }
+
     // Helper static class to wrap responses nicely
     private static class StringResponse {
         public String message;
