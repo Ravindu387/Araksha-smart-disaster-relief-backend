@@ -23,14 +23,33 @@ public class GlobalExceptionHandler {
                 .body(error);
     }
 
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<Map<String, String>> handleFileStorage(FileStorageException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, String>> handleMaxSizeExceeded(org.springframework.web.multipart.MaxUploadSizeExceededException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "File size exceeds the limit of 5 MB");
+        return ResponseEntity
+                .status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
 
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Something went wrong");
+        error.put("error", "Something went wrong: " + ex.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(error);
     }
 }
+

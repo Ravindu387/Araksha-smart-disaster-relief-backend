@@ -2,10 +2,12 @@ package org.example.arakshasmartdisasterreliefbackend.repository;
 
 import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
+public interface VolunteerRepository extends JpaRepository<Volunteer, Long>,
+        JpaSpecificationExecutor<Volunteer> {
 
     long countByStatus(String status);
 

@@ -39,4 +39,8 @@ public class Volunteer {
 
     private String phone;
 
-}
+    private String profilePhotoUrl;
+
+    private String idVerificationDocUrl;
+
+}

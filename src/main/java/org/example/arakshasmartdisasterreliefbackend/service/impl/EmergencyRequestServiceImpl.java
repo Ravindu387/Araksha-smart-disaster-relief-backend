@@ -9,9 +9,14 @@ import org.example.arakshasmartdisasterreliefbackend.entity.Notification;
 import org.example.arakshasmartdisasterreliefbackend.repository.EmergencyRequestRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.NotificationRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.EmergencyRequestService;
+import org.example.arakshasmartdisasterreliefbackend.specification.EmergencyRequestSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +38,8 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 .location(request.getLocation())
                 .assignedVolunteer(request.getAssignedVolunteer())
                 .requestTime(LocalDateTime.now())
+                .disasterImageUrl(request.getDisasterImageUrl())
+                .documentUrl(request.getDocumentUrl())
                 .build();
 
         EmergencyRequest saved = repository.save(emergencyRequest);
@@ -88,6 +95,8 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
         emergencyRequest.setStatus(request.getStatus());
         emergencyRequest.setLocation(request.getLocation());
         emergencyRequest.setAssignedVolunteer(request.getAssignedVolunteer());
+        emergencyRequest.setDisasterImageUrl(request.getDisasterImageUrl());
+        emergencyRequest.setDocumentUrl(request.getDocumentUrl());
 
         EmergencyRequest updated = repository.save(emergencyRequest);
 
@@ -103,8 +112,29 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
         repository.delete(emergencyRequest);
     }
 
+    // ── Search with server-side pagination ────────────────────────────────────
+    @Override
+    public Page<EmergencyRequestResponse> searchEmergencyRequests(
+            String keyword,
+            String status,
+            String priority,
+            String disasterType,
+            String district,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Pageable pageable) {
+
+        return repository
+                .findAll(
+                        EmergencyRequestSpecification.build(
+                                keyword, status, priority, disasterType, district, dateFrom, dateTo),
+                        pageable)
+                .map(this::mapToResponse);
+    }
+
+    // ── Mapping helper ────────────────────────────────────────────────────────
     private EmergencyRequestResponse mapToResponse(EmergencyRequest emergencyRequest) {
-        List<String> resources = new java.util.ArrayList<>();
+        List<String> resources = new ArrayList<>();
         if (emergencyRequest.getNeeds() != null) {
             for (EmergencyNeed need : emergencyRequest.getNeeds()) {
                 if (need.getNeed() != null) {
@@ -124,6 +154,8 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 .assignedVolunteer(emergencyRequest.getAssignedVolunteer())
                 .requestTime(emergencyRequest.getRequestTime())
                 .resources(resources)
+                .disasterImageUrl(emergencyRequest.getDisasterImageUrl())
+                .documentUrl(emergencyRequest.getDocumentUrl())
                 .build();
     }
 }

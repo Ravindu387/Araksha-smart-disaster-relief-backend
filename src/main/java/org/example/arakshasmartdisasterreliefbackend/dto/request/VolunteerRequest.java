@@ -33,4 +33,8 @@ public class VolunteerRequest {
 
     @NotBlank(message = "Phone number is required")
     private String phone;
-}
+
+    private String profilePhotoUrl;
+
+    private String idVerificationDocUrl;
+}

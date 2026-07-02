@@ -30,4 +30,7 @@ public class EmergencyRequestRequest {
 
     private String assignedVolunteer;
 
-}
+    private String disasterImageUrl;
+
+    private String documentUrl;
+}

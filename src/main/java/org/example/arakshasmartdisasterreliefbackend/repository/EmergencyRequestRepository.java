@@ -2,12 +2,14 @@ package org.example.arakshasmartdisasterreliefbackend.repository;
 
 import org.example.arakshasmartdisasterreliefbackend.entity.EmergencyRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface EmergencyRequestRepository extends JpaRepository<EmergencyRequest, Long> {
+public interface EmergencyRequestRepository extends JpaRepository<EmergencyRequest, Long>,
+        JpaSpecificationExecutor<EmergencyRequest> {
 
     long countByStatus(String status);
 

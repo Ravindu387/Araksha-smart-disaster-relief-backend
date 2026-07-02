@@ -26,4 +26,8 @@ public class VolunteerResponse {
     private Integer tasks;
 
     private String phone;
-}
+
+    private String profilePhotoUrl;
+
+    private String idVerificationDocUrl;
+}

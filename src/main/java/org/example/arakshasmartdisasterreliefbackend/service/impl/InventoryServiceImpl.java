@@ -1,13 +1,14 @@
 package org.example.arakshasmartdisasterreliefbackend.service.impl;
 
-
-
 import org.example.arakshasmartdisasterreliefbackend.entity.Inventory;
 import org.example.arakshasmartdisasterreliefbackend.entity.Notification;
 import org.example.arakshasmartdisasterreliefbackend.repository.InventoryRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.NotificationRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.InventoryService;
+import org.example.arakshasmartdisasterreliefbackend.specification.InventorySpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -90,5 +91,18 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void deleteInventory(Long id) {
         inventoryRepository.deleteById(id);
+    }
+
+    // ── Search with server-side pagination ────────────────────────────────────
+    @Override
+    public Page<Inventory> searchInventory(
+            String keyword,
+            String category,
+            String stockStatus,
+            Pageable pageable) {
+
+        return inventoryRepository.findAll(
+                InventorySpecification.build(keyword, category, stockStatus),
+                pageable);
     }
 }

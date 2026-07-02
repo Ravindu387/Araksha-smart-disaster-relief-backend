@@ -7,6 +7,9 @@ import org.example.arakshasmartdisasterreliefbackend.entity.Shelter;
 import org.example.arakshasmartdisasterreliefbackend.repository.NotificationRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.ShelterRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.ShelterService;
+import org.example.arakshasmartdisasterreliefbackend.specification.ShelterSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +20,7 @@ import java.util.List;
 public class ShelterServiceImpl implements ShelterService {
     private final ShelterRepository shelterRepository;
     private final NotificationRepository notificationRepository;
+
     @Override
     public Shelter registerShelter(ShelterRequestDTO dto) {
         Shelter shelter = new Shelter();
@@ -43,6 +47,7 @@ public class ShelterServiceImpl implements ShelterService {
         shelter.setLongitude(dto.getLongitude());
 
         shelter.setAmenities(dto.getAmenities());
+        shelter.setShelterImageUrl(dto.getShelterImageUrl());
 
         shelter.setLastUpdated(LocalDateTime.now());
 
@@ -105,6 +110,7 @@ public class ShelterServiceImpl implements ShelterService {
         shelter.setLatitude(dto.getLatitude());
         shelter.setLongitude(dto.getLongitude());
         shelter.setAmenities(dto.getAmenities());
+        shelter.setShelterImageUrl(dto.getShelterImageUrl());
         shelter.setLastUpdated(LocalDateTime.now());
 
         Shelter updated = shelterRepository.save(shelter);
@@ -124,5 +130,19 @@ public class ShelterServiceImpl implements ShelterService {
         notificationRepository.save(n);
 
         return updated;
+    }
+
+    // ── Search with server-side pagination ────────────────────────────────────
+    @Override
+    public Page<Shelter> searchSheltersPage(
+            String keyword,
+            String status,
+            Integer minCapacity,
+            Integer maxCapacity,
+            Pageable pageable) {
+
+        return shelterRepository.findAll(
+                ShelterSpecification.build(keyword, status, minCapacity, maxCapacity),
+                pageable);
     }
 }

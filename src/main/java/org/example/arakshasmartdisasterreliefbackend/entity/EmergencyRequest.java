@@ -37,6 +37,10 @@ public class EmergencyRequest {
 
     private LocalDateTime requestTime;
 
+    private String disasterImageUrl;
+
+    private String documentUrl;
+
     @OneToMany(
             mappedBy = "emergencyRequest",
             cascade = CascadeType.ALL,
@@ -45,4 +49,4 @@ public class EmergencyRequest {
     @Builder.Default
     private List<EmergencyNeed> needs = new ArrayList<>();
 
-}
+}

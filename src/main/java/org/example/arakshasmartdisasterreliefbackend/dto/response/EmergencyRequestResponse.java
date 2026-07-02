@@ -32,4 +32,7 @@ public class EmergencyRequestResponse {
 
     private List<String> resources;
 
-}
+    private String disasterImageUrl;
+
+    private String documentUrl;
+}

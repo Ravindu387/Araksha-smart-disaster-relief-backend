@@ -2,11 +2,13 @@ package org.example.arakshasmartdisasterreliefbackend.repository;
 
 import org.example.arakshasmartdisasterreliefbackend.entity.Shelter;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ShelterRepository extends JpaRepository<Shelter, Integer> {
+public interface ShelterRepository extends JpaRepository<Shelter, Integer>,
+        JpaSpecificationExecutor<Shelter> {
 
     List<Shelter> findByStatus(String status);
 

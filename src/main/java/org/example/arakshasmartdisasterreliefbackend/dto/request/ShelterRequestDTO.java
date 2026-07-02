@@ -27,4 +27,6 @@ public class ShelterRequestDTO {
     private BigDecimal longitude;
 
     private LocalDateTime lastUpdated;
-}
+
+    private String shelterImageUrl;
+}
