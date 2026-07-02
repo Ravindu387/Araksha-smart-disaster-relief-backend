@@ -37,4 +37,8 @@ public class VolunteerRequest {
     private String profilePhotoUrl;
 
     private String idVerificationDocUrl;
+
+    private Double latitude;
+
+    private Double longitude;
 }

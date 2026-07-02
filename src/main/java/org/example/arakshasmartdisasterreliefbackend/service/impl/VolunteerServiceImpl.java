@@ -33,6 +33,8 @@ public class VolunteerServiceImpl implements VolunteerService {
                 .phone(request.getPhone())
                 .profilePhotoUrl(request.getProfilePhotoUrl())
                 .idVerificationDocUrl(request.getIdVerificationDocUrl())
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
                 .build();
 
         Volunteer savedVolunteer = repository.save(volunteer);
@@ -73,6 +75,8 @@ public class VolunteerServiceImpl implements VolunteerService {
         volunteer.setPhone(request.getPhone());
         volunteer.setProfilePhotoUrl(request.getProfilePhotoUrl());
         volunteer.setIdVerificationDocUrl(request.getIdVerificationDocUrl());
+        volunteer.setLatitude(request.getLatitude());
+        volunteer.setLongitude(request.getLongitude());
 
         Volunteer updatedVolunteer = repository.save(volunteer);
 
@@ -116,6 +120,8 @@ public class VolunteerServiceImpl implements VolunteerService {
                 .phone(volunteer.getPhone())
                 .profilePhotoUrl(volunteer.getProfilePhotoUrl())
                 .idVerificationDocUrl(volunteer.getIdVerificationDocUrl())
+                .latitude(volunteer.getLatitude())
+                .longitude(volunteer.getLongitude())
                 .build();
     }
 }

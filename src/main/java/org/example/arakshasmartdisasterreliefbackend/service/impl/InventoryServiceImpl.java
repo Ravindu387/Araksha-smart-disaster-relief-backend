@@ -22,6 +22,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private org.example.arakshasmartdisasterreliefbackend.service.SmsService smsService;
+
     @Override
     public List<Inventory> getAllInventory() {
         return inventoryRepository.findAll();
@@ -81,6 +84,14 @@ public class InventoryServiceImpl implements InventoryService {
             n.setTime("Just now");
             n.setRead(false);
             notificationRepository.save(n);
+
+            if (updated.getCount() <= updated.getMinStock()) {
+                try {
+                    smsService.sendResourceShortageSms("+94772223333", updated.getName(), updated.getCount(), updated.getMinStock());
+                } catch (Exception e) {
+                    // log or ignore
+                }
+            }
 
             return updated;
         }

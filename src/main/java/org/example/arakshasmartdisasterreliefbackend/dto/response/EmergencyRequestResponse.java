@@ -35,4 +35,8 @@ public class EmergencyRequestResponse {
     private String disasterImageUrl;
 
     private String documentUrl;
+
+    private Double latitude;
+
+    private Double longitude;
 }

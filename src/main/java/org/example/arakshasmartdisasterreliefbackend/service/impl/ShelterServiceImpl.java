@@ -20,6 +20,8 @@ import java.util.List;
 public class ShelterServiceImpl implements ShelterService {
     private final ShelterRepository shelterRepository;
     private final NotificationRepository notificationRepository;
+    private final org.example.arakshasmartdisasterreliefbackend.service.SmsService smsService;
+    private final org.example.arakshasmartdisasterreliefbackend.service.EmailService emailService;
 
     @Override
     public Shelter registerShelter(ShelterRequestDTO dto) {
@@ -53,7 +55,6 @@ public class ShelterServiceImpl implements ShelterService {
 
         Shelter saved = shelterRepository.save(shelter);
 
-        // Auto-create notification
         Notification n = new Notification();
         n.setCategory("shelters");
         n.setSeverity("info");
@@ -64,6 +65,16 @@ public class ShelterServiceImpl implements ShelterService {
         n.setTime("Just now");
         n.setRead(false);
         notificationRepository.save(n);
+
+        // Send notifications if nearly full
+        if ("Limited".equals(saved.getStatus()) || "Full".equals(saved.getStatus())) {
+            try {
+                smsService.sendShelterNearlyFullSms("+94771112222", saved.getName(), saved.getOccupied(), saved.getCapacity());
+                emailService.sendShelterNotificationEmail("shelter-manager@example.com", saved.getName(), saved.getStatus(), saved.getOccupied(), saved.getCapacity());
+            } catch (Exception e) {
+                // log or ignore
+            }
+        }
 
         return saved;
     }
@@ -128,6 +139,16 @@ public class ShelterServiceImpl implements ShelterService {
         n.setTime("Just now");
         n.setRead(false);
         notificationRepository.save(n);
+
+        // Send notifications if nearly full
+        if ("Limited".equals(updated.getStatus()) || "Full".equals(updated.getStatus())) {
+            try {
+                smsService.sendShelterNearlyFullSms("+94771112222", updated.getName(), updated.getOccupied(), updated.getCapacity());
+                emailService.sendShelterNotificationEmail("shelter-manager@example.com", updated.getName(), updated.getStatus(), updated.getOccupied(), updated.getCapacity());
+            } catch (Exception e) {
+                // log or ignore
+            }
+        }
 
         return updated;
     }

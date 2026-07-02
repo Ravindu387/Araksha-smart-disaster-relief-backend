@@ -41,6 +41,10 @@ public class EmergencyRequest {
 
     private String documentUrl;
 
+    private Double latitude;
+
+    private Double longitude;
+
     @OneToMany(
             mappedBy = "emergencyRequest",
             cascade = CascadeType.ALL,

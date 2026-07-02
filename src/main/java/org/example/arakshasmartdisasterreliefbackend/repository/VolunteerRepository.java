@@ -15,4 +15,5 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long>,
 
     List<Volunteer> findTop5ByOrderByTasksDesc();
 
+    java.util.Optional<Volunteer> findByName(String name);
 }

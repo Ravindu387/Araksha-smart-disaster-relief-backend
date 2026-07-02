@@ -21,6 +21,7 @@ public class SystemReportServiceImpl implements SystemReportService {
     private final ShelterRepository shelterRepository;
     private final InventoryRepository inventoryRepository;
     private final ScheduledReportRepository reportRepository;
+    private final org.example.arakshasmartdisasterreliefbackend.service.EmailService emailService;
 
     @Override
     public ScheduledReport generateAndSaveDailySummary() {
@@ -59,6 +60,14 @@ public class SystemReportServiceImpl implements SystemReportService {
                 .pendingRequests(pendingRequests)
                 .build();
 
-        return reportRepository.save(report);
+        ScheduledReport saved = reportRepository.save(report);
+
+        try {
+            emailService.sendDailySummaryReportEmail("admin@araksha.gov.lk", totalEmergencies, activeVolunteers, occupancyPercentage, lowStockResources, pendingRequests);
+        } catch (Exception e) {
+            // log or ignore
+        }
+
+        return saved;
     }
 }

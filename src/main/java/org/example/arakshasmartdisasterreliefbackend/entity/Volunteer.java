@@ -43,4 +43,7 @@ public class Volunteer {
 
     private String idVerificationDocUrl;
 
+    private Double latitude;
+
+    private Double longitude;
 }

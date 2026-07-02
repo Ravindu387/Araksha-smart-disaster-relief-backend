@@ -1,6 +1,7 @@
 package org.example.arakshasmartdisasterreliefbackend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.arakshasmartdisasterreliefbackend.dto.request.EmergencyRequestRequest;
 import org.example.arakshasmartdisasterreliefbackend.dto.response.EmergencyRequestResponse;
 import org.example.arakshasmartdisasterreliefbackend.entity.EmergencyRequest;
@@ -21,13 +22,31 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmergencyRequestServiceImpl implements EmergencyRequestService {
 
     private final EmergencyRequestRepository repository;
     private final NotificationRepository notificationRepository;
+    private final org.example.arakshasmartdisasterreliefbackend.service.SmsService smsService;
+    private final org.example.arakshasmartdisasterreliefbackend.service.EmailService emailService;
+    private final org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository volunteerRepository;
+    private final org.example.arakshasmartdisasterreliefbackend.service.GeocodingService geocodingService;
 
     @Override
     public EmergencyRequestResponse createEmergencyRequest(EmergencyRequestRequest request) {
+
+        Double lat = request.getLatitude();
+        Double lng = request.getLongitude();
+        if (lat == null || lng == null) {
+            try {
+                org.example.arakshasmartdisasterreliefbackend.dto.LatLngDTO coords = geocodingService.geocode(request.getLocation());
+                lat = coords.getLatitude();
+                lng = coords.getLongitude();
+            } catch (Exception e) {
+                lat = 6.9271;
+                lng = 79.8612;
+            }
+        }
 
         EmergencyRequest emergencyRequest = EmergencyRequest.builder()
                 .requestId(request.getRequestId())
@@ -40,6 +59,8 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 .requestTime(LocalDateTime.now())
                 .disasterImageUrl(request.getDisasterImageUrl())
                 .documentUrl(request.getDocumentUrl())
+                .latitude(lat)
+                .longitude(lng)
                 .build();
 
         EmergencyRequest saved = repository.save(emergencyRequest);
@@ -60,6 +81,14 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
         n.setTime("Just now");
         n.setRead(false);
         notificationRepository.save(n);
+
+        // Send SMS & Email alerts
+        try {
+            smsService.sendEmergencyCreatedSms("+94770000000", saved.getRequestId(), saved.getEmergencyType(), saved.getLocation());
+            emailService.sendEmergencyConfirmationEmail("citizen@example.com", saved.getCitizenName(), saved.getRequestId(), saved.getEmergencyType(), saved.getLocation());
+        } catch (Exception e) {
+            log.error("Failed to send automatic emergency creation alerts: {}", e.getMessage());
+        }
 
         return mapToResponse(saved);
     }
@@ -88,6 +117,22 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
         EmergencyRequest emergencyRequest = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Emergency Request not found"));
 
+        String oldVol = emergencyRequest.getAssignedVolunteer();
+        String newVol = request.getAssignedVolunteer();
+
+        Double lat = request.getLatitude();
+        Double lng = request.getLongitude();
+        if (lat == null || lng == null) {
+            try {
+                org.example.arakshasmartdisasterreliefbackend.dto.LatLngDTO coords = geocodingService.geocode(request.getLocation());
+                lat = coords.getLatitude();
+                lng = coords.getLongitude();
+            } catch (Exception e) {
+                lat = emergencyRequest.getLatitude();
+                lng = emergencyRequest.getLongitude();
+            }
+        }
+
         emergencyRequest.setRequestId(request.getRequestId());
         emergencyRequest.setCitizenName(request.getCitizenName());
         emergencyRequest.setEmergencyType(request.getEmergencyType());
@@ -97,8 +142,23 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
         emergencyRequest.setAssignedVolunteer(request.getAssignedVolunteer());
         emergencyRequest.setDisasterImageUrl(request.getDisasterImageUrl());
         emergencyRequest.setDocumentUrl(request.getDocumentUrl());
+        emergencyRequest.setLatitude(lat);
+        emergencyRequest.setLongitude(lng);
 
         EmergencyRequest updated = repository.save(emergencyRequest);
+
+        // Send SMS/Email alerts if volunteer is assigned/reassigned
+        if (newVol != null && !newVol.trim().isEmpty() && (oldVol == null || !oldVol.equals(newVol))) {
+            try {
+                volunteerRepository.findByName(newVol).ifPresent(v -> {
+                    smsService.sendVolunteerAssignmentSms(v.getPhone(), v.getName(), updated.getRequestId(), updated.getLocation());
+                    emailService.sendVolunteerAssignmentEmail("volunteer@example.com", v.getName(), updated.getRequestId(), updated.getLocation(), 
+                            "Please proceed immediately to the designated location to assist response efforts. Stay safe.");
+                });
+            } catch (Exception e) {
+                log.error("Failed to send volunteer assignment notification: {}", e.getMessage());
+            }
+        }
 
         return mapToResponse(updated);
     }
@@ -156,6 +216,8 @@ public class EmergencyRequestServiceImpl implements EmergencyRequestService {
                 .resources(resources)
                 .disasterImageUrl(emergencyRequest.getDisasterImageUrl())
                 .documentUrl(emergencyRequest.getDocumentUrl())
+                .latitude(emergencyRequest.getLatitude())
+                .longitude(emergencyRequest.getLongitude())
                 .build();
     }
 }

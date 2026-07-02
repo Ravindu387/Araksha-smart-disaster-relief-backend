@@ -30,4 +30,8 @@ public class VolunteerResponse {
     private String profilePhotoUrl;
 
     private String idVerificationDocUrl;
+
+    private Double latitude;
+
+    private Double longitude;
 }
