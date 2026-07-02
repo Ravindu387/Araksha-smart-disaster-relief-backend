@@ -18,4 +18,7 @@ public class NearbyShelterDTO {
     private String status;
     private Double latitude;
     private Double longitude;
+    private String redirectionTarget;
+    private Double redirectLat;
+    private Double redirectLng;
 }

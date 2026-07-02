@@ -27,6 +27,8 @@ public class ExternalApiController {
     private final EmergencyRequestService emergencyRequestService;
     private final org.example.arakshasmartdisasterreliefbackend.repository.MutualAidRepository mutualAidRepository;
     private final org.example.arakshasmartdisasterreliefbackend.repository.CitizenRepository citizenRepository;
+    private final org.example.arakshasmartdisasterreliefbackend.repository.ShelterRepository shelterRepository;
+    private final org.example.arakshasmartdisasterreliefbackend.repository.InventoryRepository inventoryRepository;
 
     // ── Weather API ──────────────────────────────────────────────────────────
     @GetMapping("/weather")
@@ -89,8 +91,34 @@ public class ExternalApiController {
             @RequestParam Double lat,
             @RequestParam Double lng) {
         
-        log.info("REST request to query nearby shelters");
+        log.info("REST request to query nearby shelters with predictive redirection check");
         List<NearbyShelterDTO> shelters = distanceService.getNearbyShelters(lat, lng);
+        
+        if (!shelters.isEmpty()) {
+            NearbyShelterDTO closest = shelters.get(0);
+            if (closest.getOccupied() != null && closest.getCapacity() != null &&
+                    closest.getOccupied() >= (closest.getCapacity() * 0.9)) {
+                
+                NearbyShelterDTO alternative = null;
+                for (int i = 1; i < shelters.size(); i++) {
+                    NearbyShelterDTO candidate = shelters.get(i);
+                    if (candidate.getOccupied() != null && candidate.getCapacity() != null &&
+                            candidate.getOccupied() < (candidate.getCapacity() * 0.9)) {
+                        alternative = candidate;
+                        break;
+                    }
+                }
+                
+                if (alternative != null) {
+                    closest.setRedirectionTarget(alternative.getName());
+                    closest.setRedirectLat(alternative.getLatitude());
+                    closest.setRedirectLng(alternative.getLongitude());
+                    log.warn("🚨 Closest shelter '{}' is near capacity! Suggesting redirection to '{}'.",
+                            closest.getName(), alternative.getName());
+                }
+            }
+        }
+        
         return ResponseEntity.ok(shelters);
     }
 
@@ -422,6 +450,56 @@ public class ExternalApiController {
                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
+    }
+
+    @PostMapping("/shelters/{id}/audit")
+    public ResponseEntity<StringResponse> auditShelterCapacity(
+            @PathVariable Integer id,
+            @RequestParam Integer occupied) {
+        
+        log.info("Auditing shelter capacity. ID: {}, Occupied: {}", id, occupied);
+        
+        org.example.arakshasmartdisasterreliefbackend.entity.Shelter shelter = 
+                shelterRepository.findById(id).orElse(null);
+        if (shelter == null) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        shelter.setOccupied(occupied);
+        if (occupied >= shelter.getCapacity()) {
+            shelter.setStatus("Full");
+        } else if (occupied >= (shelter.getCapacity() * 0.9)) {
+            shelter.setStatus("Limited");
+        } else {
+            shelter.setStatus("Available");
+        }
+        shelterRepository.save(shelter);
+        
+        int waterNeeded = occupied * 3;
+        int foodNeeded = occupied * 2;
+        int medicalNeeded = (int) Math.ceil(occupied * 0.5);
+        
+        List<org.example.arakshasmartdisasterreliefbackend.entity.Inventory> items = inventoryRepository.findAll();
+        for (org.example.arakshasmartdisasterreliefbackend.entity.Inventory item : items) {
+            if (item.getName().toLowerCase().contains("water")) {
+                item.setCount(Math.max(0, item.getCount() - waterNeeded));
+                item.setAllocated(item.getAllocated() + waterNeeded);
+                inventoryRepository.save(item);
+            } else if (item.getName().toLowerCase().contains("food")) {
+                item.setCount(Math.max(0, item.getCount() - foodNeeded));
+                item.setAllocated(item.getAllocated() + foodNeeded);
+                inventoryRepository.save(item);
+            } else if (item.getName().toLowerCase().contains("medical")) {
+                item.setCount(Math.max(0, item.getCount() - medicalNeeded));
+                item.setAllocated(item.getAllocated() + medicalNeeded);
+                inventoryRepository.save(item);
+            }
+        }
+        
+        String msg = String.format("Shelter %s audited. New Occupancy: %d/%d. Allocated: Water %d L, Food %d kits, Medical %d kits.",
+                shelter.getName(), occupied, shelter.getCapacity(), waterNeeded, foodNeeded, medicalNeeded);
+        log.info(msg);
+        return ResponseEntity.ok(new StringResponse(msg));
     }
 
     // Helper static class to wrap responses nicely
