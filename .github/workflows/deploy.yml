@@ -16,17 +16,18 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # 1. ඔයාගේ ප්‍රොජෙක්ට් ෆෝල්ඩරයට යන්න (මෙහි my-backend-folder යන්න වෙනස් කරන්න)
+           
             cd /home/ubuntu/Araksha-smart-disaster-relief-backend 
             
-            # 2. අලුත් code එක GitHub එකෙන් ගන්න
+            
             git pull origin dev
             
-            # 3. App එක Build කරන්න 
+            chmod +x mvnw
+            
             ./mvnw clean package -DskipTests
             
-            # 4. දැනට Run වෙවී තියෙන පරණ Spring Boot App එක නවත්වන්න
+            
             pkill -f 'java -jar' || true
             
-            # 5. අලුතින් හැදුනු Jar ෆයිල් එක Background එකේ Run කරන්න (Jar නම වෙනස් කරන්න)
+           
             nohup java -jar target/Araksha-smart-disaster-relief-backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
