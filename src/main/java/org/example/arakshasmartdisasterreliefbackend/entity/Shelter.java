@@ -48,4 +48,6 @@ public class Shelter {
 
     private String shelterImageUrl;
 
+    private LocalDateTime closingDate;
+
 }
