@@ -13,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.arakshasmartdisasterreliefbackend.entity.Citizen;
 import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
+import org.example.arakshasmartdisasterreliefbackend.entity.VolunteerHub;
 import org.example.arakshasmartdisasterreliefbackend.repository.CitizenRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
+import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerHubRepository;
 import org.example.arakshasmartdisasterreliefbackend.enums.Role;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final CitizenRepository citizenRepository;
     private final VolunteerRepository volunteerRepository;
+    private final VolunteerHubRepository volunteerHubRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -64,11 +67,23 @@ public class AuthServiceImpl implements AuthService {
             volunteer.setPhone("");
             volunteer.setSkills(new ArrayList<>());
             volunteerRepository.save(volunteer);
+
+            VolunteerHub volunteerHub = new VolunteerHub();
+            volunteerHub.setVolunteerCode("V-" + (volunteerHubRepository.count() + 1));
+            volunteerHub.setName(request.getFirstName() + " " + request.getLastName());
+            volunteerHub.setEmail(request.getEmail());
+            volunteerHub.setPhone("TBD-" + request.getEmail().hashCode()); // unique phone constraint check helper
+            volunteerHub.setStatus("Available");
+            volunteerHub.setAvailable(true);
+            volunteerHub.setCurrentLatitude(29.76);
+            volunteerHub.setCurrentLongitude(-95.36);
+            volunteerHubRepository.save(volunteerHub);
         }
 
         /* ---------------------------------------------- */
 
-        return "Registration Successful";}
+        return "Registration Successful";
+    }
 
     @Override
     public LoginResponse login(LoginRequest request) {

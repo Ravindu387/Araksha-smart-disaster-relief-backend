@@ -25,9 +25,49 @@ public class DataInitializer implements CommandLineRunner {
     private final NotificationRepository notificationRepository;
     private final CitizenRepository citizenRepository;
     private final VolunteerHubRepository volunteerHubRepository;
+    private final UserRepository userRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+
+        if (userRepository.count() == 0) {
+            // Seed Admin
+            User admin = new User();
+            admin.setFirstName("System");
+            admin.setLastName("Admin");
+            admin.setEmail("admin@araksha.com");
+            admin.setPassword(passwordEncoder.encode("password123"));
+            admin.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.ADMIN);
+            userRepository.save(admin);
+
+            // Seed Volunteer 1 (Lisa Chen)
+            User v1 = new User();
+            v1.setFirstName("Lisa");
+            v1.setLastName("Chen");
+            v1.setEmail("volunteer@araksha.com");
+            v1.setPassword(passwordEncoder.encode("password123"));
+            v1.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.VOLUNTEER);
+            userRepository.save(v1);
+
+            // Seed Volunteer 2 (Michael Davis)
+            User v2 = new User();
+            v2.setFirstName("Michael");
+            v2.setLastName("Davis");
+            v2.setEmail("michael@example.com");
+            v2.setPassword(passwordEncoder.encode("password123"));
+            v2.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.VOLUNTEER);
+            userRepository.save(v2);
+
+            // Seed Citizen (Alice Smith)
+            User c1 = new User();
+            c1.setFirstName("Alice");
+            c1.setLastName("Smith");
+            c1.setEmail("alice@example.com");
+            c1.setPassword(passwordEncoder.encode("password123"));
+            c1.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.CITIZEN);
+            userRepository.save(c1);
+        }
 
         if (citizenRepository.count() == 0) {
             Citizen alice = new Citizen("Alice Smith", "alice@example.com", "+1 (555) 019-2834", "120 Houston Ave, Houston, TX", "password123");
