@@ -1,0 +1,38 @@
+name: Deploy Spring Boot to EC2
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into Server and Update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/ubuntu/Araksha-smart-disaster-relief-backend
+            
+            pkill -f 'java -jar' || true
+            sleep 2
+            
+            git pull origin dev
+            chmod +x mvnw
+            ./mvnw clean package -DskipTests
+            
+            # Start Java app in the background with proper detachment
+            nohup java -jar target/Araksha-smart-disaster-relief-Backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            APP_PID=$!
+            sleep 2
+            
+            # Verify the process is still running
+            if kill -0 $APP_PID 2>/dev/null; then
+              echo "Application started successfully with PID $APP_PID"
+            else
+              echo "Warning: Application may have failed to start"
+            fi
