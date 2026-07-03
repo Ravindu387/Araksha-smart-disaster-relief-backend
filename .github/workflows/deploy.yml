@@ -25,9 +25,14 @@ jobs:
             chmod +x mvnw
             ./mvnw clean package -DskipTests
             
-            # Properly detach the Java process from SSH session
+            # Start Java app in the background with proper detachment
             nohup java -jar target/Araksha-smart-disaster-relief-Backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            APP_PID=$!
+            sleep 2
             
-            # Give the process time to start, then exit the SSH session
-            sleep 3
-            exit 0
+            # Verify the process is still running
+            if kill -0 $APP_PID 2>/dev/null; then
+              echo "Application started successfully with PID $APP_PID"
+            else
+              echo "Warning: Application may have failed to start"
+            fi
