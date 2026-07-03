@@ -20,7 +20,7 @@ jobs:
             
             pkill -f 'java -jar' || true
             sleep 2
-            
+            #new code
             git pull origin dev
             
             
