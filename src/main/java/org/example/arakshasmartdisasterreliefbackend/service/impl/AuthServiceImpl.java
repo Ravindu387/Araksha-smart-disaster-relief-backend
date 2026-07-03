@@ -15,6 +15,8 @@ import org.example.arakshasmartdisasterreliefbackend.entity.Citizen;
 import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
 import org.example.arakshasmartdisasterreliefbackend.repository.CitizenRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
+import org.example.arakshasmartdisasterreliefbackend.entity.VolunteerHub;
+import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerHubRepository;
 import org.example.arakshasmartdisasterreliefbackend.enums.Role;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final CitizenRepository citizenRepository;
     private final VolunteerRepository volunteerRepository;
+    private final VolunteerHubRepository volunteerHubRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -64,6 +67,17 @@ public class AuthServiceImpl implements AuthService {
             volunteer.setPhone("");
             volunteer.setSkills(new ArrayList<>());
             volunteerRepository.save(volunteer);
+
+            VolunteerHub volunteerHub = new VolunteerHub();
+            volunteerHub.setVolunteerCode("VOL-" + String.format("%04d", (int)(Math.random() * 10000)));
+            volunteerHub.setName(request.getFirstName() + " " + request.getLastName());
+            volunteerHub.setEmail(request.getEmail());
+            volunteerHub.setPhone("+94 77 " + String.format("%07d", (int)(Math.random() * 10000000)));
+            volunteerHub.setStatus("Available");
+            volunteerHub.setAvailable(true);
+            volunteerHub.setCurrentLatitude(6.9271);
+            volunteerHub.setCurrentLongitude(79.8612);
+            volunteerHubRepository.save(volunteerHub);
         }
 
         /* ---------------------------------------------- */
