@@ -13,11 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.example.arakshasmartdisasterreliefbackend.entity.Citizen;
 import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
+import org.example.arakshasmartdisasterreliefbackend.entity.VolunteerHub;
 import org.example.arakshasmartdisasterreliefbackend.repository.CitizenRepository;
 import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
+import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerHubRepository;
 import org.example.arakshasmartdisasterreliefbackend.enums.Role;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final CitizenRepository citizenRepository;
     private final VolunteerRepository volunteerRepository;
+    private final VolunteerHubRepository volunteerHubRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -64,6 +68,18 @@ public class AuthServiceImpl implements AuthService {
             volunteer.setPhone("");
             volunteer.setSkills(new ArrayList<>());
             volunteerRepository.save(volunteer);
+
+            VolunteerHub volunteerHub = VolunteerHub.builder()
+                    .volunteerCode("V-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase())
+                    .name(request.getFirstName() + " " + request.getLastName())
+                    .email(request.getEmail())
+                    .phone("")
+                    .status("Available")
+                    .available(true)
+                    .currentLatitude(29.76)
+                    .currentLongitude(-95.36)
+                    .build();
+            volunteerHubRepository.save(volunteerHub);
         }
 
         /* ---------------------------------------------- */

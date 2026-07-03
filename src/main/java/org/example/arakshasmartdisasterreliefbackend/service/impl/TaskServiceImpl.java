@@ -5,6 +5,8 @@ import org.example.arakshasmartdisasterreliefbackend.dto.request.TaskRequest;
 import org.example.arakshasmartdisasterreliefbackend.dto.response.TaskResponse;
 import org.example.arakshasmartdisasterreliefbackend.entity.Task;
 import org.example.arakshasmartdisasterreliefbackend.repository.TaskRepository;
+import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
+import org.example.arakshasmartdisasterreliefbackend.repository.EmergencyRequestRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.TaskService;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository repository;
+    private final VolunteerRepository volunteerRepository;
+    private final EmergencyRequestRepository emergencyRequestRepository;
 
     @Override
     public TaskResponse create(TaskRequest request){
@@ -27,6 +31,24 @@ public class TaskServiceImpl implements TaskService {
                 .priority(request.getPriority())
                 .status(request.getStatus())
                 .build();
+
+        if (request.getVolunteerId() != null) {
+            task.setVolunteer(volunteerRepository.findById(request.getVolunteerId()).orElse(null));
+        }
+
+        if (request.getEmergencyRequestId() != null) {
+            org.example.arakshasmartdisasterreliefbackend.entity.EmergencyRequest req = 
+                emergencyRequestRepository.findById(request.getEmergencyRequestId()).orElse(null);
+            
+            if (req != null) {
+                req.setStatus("Assigned");
+                if (task.getVolunteer() != null) {
+                    req.setAssignedVolunteer(task.getVolunteer().getName());
+                }
+                emergencyRequestRepository.save(req);
+                task.setEmergencyRequest(req);
+            }
+        }
 
         return map(repository.save(task));
 

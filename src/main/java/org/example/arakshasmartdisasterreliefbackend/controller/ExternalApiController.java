@@ -616,6 +616,30 @@ public class ExternalApiController {
         }
     }
 
+    @GetMapping("/inventory/low-stock")
+    public ResponseEntity<List<org.example.arakshasmartdisasterreliefbackend.entity.Inventory>> getLowStockInventory() {
+        log.info("REST request to query low stock warehouse supply lines");
+        List<org.example.arakshasmartdisasterreliefbackend.entity.Inventory> items = inventoryRepository.findAll();
+        List<org.example.arakshasmartdisasterreliefbackend.entity.Inventory> lowStock = new java.util.ArrayList<>();
+        
+        for (org.example.arakshasmartdisasterreliefbackend.entity.Inventory item : items) {
+            if (item.getCount() != null && item.getMinStock() != null && item.getCount() < item.getMinStock()) {
+                lowStock.add(item);
+            }
+        }
+        return ResponseEntity.ok(lowStock);
+    }
+
+    @GetMapping("/weather/alerts/national")
+    public ResponseEntity<List<String>> getNationalWeatherAlerts() {
+        log.info("REST request to fetch national meteorological warning updates");
+        return ResponseEntity.ok(List.of(
+            "⚠️ MET DEPT: Severe thunderstorm advisory issued for Western, Sabaragamuwa, and Southern provinces (heavy rain exceeding 100mm expected).",
+            "🌊 COASTAL WARNING: Rough seas and strong gusty winds up to 60km/h expected along Galle, Matara, and Hambantota coastal sectors.",
+            "🏔️ LANDSLIDE ADVISORY: Level 2 Amber warning issued for low-lying slopes in Kegalle and Ratnapura districts."
+        ));
+    }
+
     // Helper static class to wrap responses nicely
     private static class StringResponse {
         public String message;

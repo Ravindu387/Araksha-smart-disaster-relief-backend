@@ -236,6 +236,16 @@ public class DataInitializer implements CommandLineRunner {
                     .currentLatitude(37.33)
                     .currentLongitude(-121.89)
                     .build());
+            volunteerHubRepository.save(VolunteerHub.builder()
+                    .volunteerCode("V-0003")
+                    .name("Volunteer One")
+                    .email("volunteer1@gmail.com")
+                    .phone("555-0103")
+                    .status("Available")
+                    .available(true)
+                    .currentLatitude(37.77)
+                    .currentLongitude(-122.41)
+                    .build());
         }
     }
 }
