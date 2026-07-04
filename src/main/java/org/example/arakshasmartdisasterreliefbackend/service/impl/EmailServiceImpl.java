@@ -130,6 +130,38 @@ public class EmailServiceImpl implements EmailService {
                 totalEmergencies, pendingRequests, activeVolunteers, shelterOccupancy, lowStockResources);
         sendEmail(toEmail, subject, body);
     }
+    @Override
+    public void sendOtpEmail(String toEmail, String otp) {
+
+        String subject = "Araksha Password Reset OTP";
+
+        String body = String.format("""
+            <html>
+            <body style="font-family:Arial,sans-serif">
+
+            <h2>Password Reset Verification</h2>
+
+            <p>You requested to reset your password.</p>
+
+            <p>Your OTP is:</p>
+
+            <h1 style="color:#2563EB;">%s</h1>
+
+            <p>This OTP is valid for <b>5 minutes</b>.</p>
+
+            <p>If you did not request this request, please ignore this email.</p>
+
+            <br>
+
+            <p>Regards,<br>
+            Araksha Smart Disaster Relief System</p>
+
+            </body>
+            </html>
+            """, otp);
+
+        sendEmail(toEmail, subject, body);
+    }
 
     private boolean isEmailConfigMissing() {
         return fromEmail == null || fromEmail.trim().isEmpty() || "YOUR_GMAIL@gmail.com".equals(fromEmail);

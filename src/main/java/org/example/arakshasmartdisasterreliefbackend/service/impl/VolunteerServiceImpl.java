@@ -13,13 +13,14 @@ import org.example.arakshasmartdisasterreliefbackend.entity.Volunteer;
 import org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository;
 import org.example.arakshasmartdisasterreliefbackend.service.VolunteerService;
 import org.example.arakshasmartdisasterreliefbackend.specification.VolunteerSpecification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 @RequiredArgsConstructor
 public class VolunteerServiceImpl implements VolunteerService {
 
     private final VolunteerRepository repository;
-
+    private final PasswordEncoder passwordEncoder;
     @Override
     public VolunteerResponse createVolunteer(VolunteerRequest request) {
 
@@ -30,6 +31,8 @@ public class VolunteerServiceImpl implements VolunteerService {
                 .status(request.getStatus())
                 .rating(request.getRating())
                 .tasks(request.getTasks())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .profilePhotoUrl(request.getProfilePhotoUrl())
                 .idVerificationDocUrl(request.getIdVerificationDocUrl())
@@ -72,6 +75,13 @@ public class VolunteerServiceImpl implements VolunteerService {
         volunteer.setStatus(request.getStatus());
         volunteer.setRating(request.getRating());
         volunteer.setTasks(request.getTasks());
+
+        volunteer.setEmail(request.getEmail());
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            volunteer.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
         volunteer.setPhone(request.getPhone());
         volunteer.setProfilePhotoUrl(request.getProfilePhotoUrl());
         volunteer.setIdVerificationDocUrl(request.getIdVerificationDocUrl());

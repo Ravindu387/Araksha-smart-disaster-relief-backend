@@ -31,6 +31,12 @@ public class VolunteerRequest {
     @NotNull(message = "Tasks are required")
     private Integer tasks;
 
+    @NotBlank(message = "Email is required")
+    private String email;
+
+    @NotBlank(message = "Password is required")
+    private String password;
+
     @NotBlank(message = "Phone number is required")
     private String phone;
 
@@ -41,4 +47,4 @@ public class VolunteerRequest {
     private Double latitude;
 
     private Double longitude;
-}
+}

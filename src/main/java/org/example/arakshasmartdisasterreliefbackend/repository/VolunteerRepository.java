@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VolunteerRepository extends JpaRepository<Volunteer, Long>,
         JpaSpecificationExecutor<Volunteer> {
@@ -15,5 +16,10 @@ public interface VolunteerRepository extends JpaRepository<Volunteer, Long>,
 
     List<Volunteer> findTop5ByOrderByTasksDesc();
 
-    java.util.Optional<Volunteer> findByName(String name);
+    Optional<Volunteer> findByName(String name);
+
+    // NEW
+    Optional<Volunteer> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

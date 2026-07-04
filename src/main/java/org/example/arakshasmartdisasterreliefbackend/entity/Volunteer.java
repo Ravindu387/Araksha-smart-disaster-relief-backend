@@ -36,6 +36,9 @@ public class Volunteer {
     private Double rating;
 
     private Integer tasks;
+    @Column(unique = true)
+    private String email;
+    private String password;
 
     private String phone;
 
@@ -46,4 +49,4 @@ public class Volunteer {
     private Double latitude;
 
     private Double longitude;
-}
+}
