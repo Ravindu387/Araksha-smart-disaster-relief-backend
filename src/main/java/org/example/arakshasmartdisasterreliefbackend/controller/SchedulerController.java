@@ -37,4 +37,21 @@ public class SchedulerController {
             return ResponseEntity.badRequest().body("Job execution failed: " + e.getMessage());
         }
     }
+
+    @PostMapping("/jobs/{jobKey}/toggle")
+    public ResponseEntity<SchedulerJob> toggleJob(
+            @PathVariable String jobKey,
+            @RequestBody java.util.Map<String, String> body) {
+        String status = body.get("status");
+        return ResponseEntity.ok(schedulerService.toggleJobStatus(jobKey, status));
+    }
+
+    @PutMapping("/jobs/{jobKey}")
+    public ResponseEntity<SchedulerJob> updateJob(
+            @PathVariable String jobKey,
+            @RequestBody java.util.Map<String, String> body) {
+        String cronExpression = body.get("cronExpression");
+        String status = body.get("status");
+        return ResponseEntity.ok(schedulerService.updateJob(jobKey, cronExpression, status));
+    }
 }

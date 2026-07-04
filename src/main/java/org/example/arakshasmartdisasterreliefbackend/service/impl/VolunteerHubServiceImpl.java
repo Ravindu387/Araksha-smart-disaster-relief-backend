@@ -17,6 +17,7 @@ import java.util.List;
 public class VolunteerHubServiceImpl implements VolunteerHubService {
 
     private final VolunteerHubRepository repository;
+    private final org.example.arakshasmartdisasterreliefbackend.repository.VolunteerRepository volunteerRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -33,6 +34,9 @@ public class VolunteerHubServiceImpl implements VolunteerHubService {
                         .available(request.getAvailable())
                         .currentLatitude(request.getCurrentLatitude())
                         .currentLongitude(request.getCurrentLongitude())
+                        .address(request.getAddress())
+                        .district(request.getDistrict())
+                        .skills(request.getSkills() != null ? request.getSkills() : new java.util.ArrayList<>())
                         .build();
 
 
@@ -85,6 +89,9 @@ public class VolunteerHubServiceImpl implements VolunteerHubService {
                             .available(true)
                             .currentLatitude(6.9271)
                             .currentLongitude(79.8612)
+                            .address("123 Relief Street, Colombo")
+                            .district("Colombo")
+                            .skills(java.util.Arrays.asList("First Aid", "Water Rescue", "Logistics"))
                             .build();
                     VolunteerHub saved = repository.save(volunteer);
                     return map(saved);
@@ -101,8 +108,45 @@ public class VolunteerHubServiceImpl implements VolunteerHubService {
                 .available(v.getAvailable())
                 .email(v.getEmail())
                 .phone(v.getPhone())
+                .address(v.getAddress())
+                .district(v.getDistrict())
+                .skills(v.getSkills())
                 .build();
 
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public VolunteerHubResponse updateLocation(Long id, Double latitude, Double longitude) {
+        VolunteerHub volunteer = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Volunteer not found with id: " + id));
+        volunteer.setCurrentLatitude(latitude);
+        volunteer.setCurrentLongitude(longitude);
+        VolunteerHub saved = repository.save(volunteer);
+        
+        volunteerRepository.findByName(saved.getName()).ifPresent(v -> {
+            v.setLatitude(latitude);
+            v.setLongitude(longitude);
+            volunteerRepository.save(v);
+        });
+
+        return map(saved);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public VolunteerHubResponse updateStatus(Long id, String status) {
+        VolunteerHub volunteer = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Volunteer not found with id: " + id));
+        volunteer.setStatus(status);
+        VolunteerHub saved = repository.save(volunteer);
+
+        volunteerRepository.findByName(saved.getName()).ifPresent(v -> {
+            v.setStatus(status);
+            volunteerRepository.save(v);
+        });
+
+        return map(saved);
     }
 
 }

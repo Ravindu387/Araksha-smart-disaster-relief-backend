@@ -18,5 +18,11 @@ public interface VolunteerHubService {
     VolunteerHubResponse getByEmail(String email);
 
 
+    VolunteerHubResponse updateLocation(Long id, Double latitude, Double longitude);
+
+
+    VolunteerHubResponse updateStatus(Long id, String status);
+
+
     void delete(Long id);
 }
