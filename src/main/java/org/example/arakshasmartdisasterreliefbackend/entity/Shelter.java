@@ -17,7 +17,7 @@ public class Shelter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer shelter_id;
 
     @Column(nullable = false, length = 150)
     private String name;
@@ -50,4 +50,4 @@ public class Shelter {
 
     private LocalDateTime closingDate;
 
-}
+}

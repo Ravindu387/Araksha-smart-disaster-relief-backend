@@ -70,7 +70,7 @@ public class DistanceServiceImpl implements DistanceService {
             }
 
             nearbyShelters.add(NearbyShelterDTO.builder()
-                    .shelterId(s.getId())
+                    .shelterId(s.getShelter_id())
                     .name(s.getName())
                     .address(s.getAddress())
                     .distanceKm(distanceKm)
