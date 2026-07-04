@@ -91,10 +91,21 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
+
+        System.out.println("========== LOGIN ==========");
+        System.out.println("Email : " + request.getEmail());
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        System.out.println("DB Password : " + user.getPassword());
+        System.out.println("Entered Password : " + request.getPassword());
+
+        boolean matches = passwordEncoder.matches(request.getPassword(), user.getPassword());
+
+        System.out.println("Password Matches : " + matches);
+
+        if (!matches) {
             throw new BadCredentialsException("Invalid email or password");
         }
 

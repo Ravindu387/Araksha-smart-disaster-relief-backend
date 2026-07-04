@@ -80,50 +80,33 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
         if (passwordResetOtp.getExpiryTime().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("OTP has expired.");
         }
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+// Update Citizen table
         Citizen citizen = citizenRepository.findByEmail(email).orElse(null);
 
-
         if (citizen != null) {
-
-            String encodedPassword = passwordEncoder.encode(newPassword);
-
             citizen.setPassword(encodedPassword);
             citizenRepository.save(citizen);
-
-// Update users table too
-            User user = userRepository.findByEmail(email).orElse(null);
-
-            if (user != null) {
-                user.setPassword(encodedPassword);
-                userRepository.save(user);
-            }
-
-            passwordResetOtpRepository.delete(passwordResetOtp);
-            return;
         }
+
+// Update Volunteer table
         Volunteer volunteer = volunteerRepository.findByEmail(email).orElse(null);
 
         if (volunteer != null) {
-
-            String encodedPassword = passwordEncoder.encode(newPassword);
-
             volunteer.setPassword(encodedPassword);
             volunteerRepository.save(volunteer);
-
-// Update users table too
-            User user = userRepository.findByEmail(email).orElse(null);
-
-            if (user != null) {
-                user.setPassword(encodedPassword);
-                userRepository.save(user);
-            }
-
-            passwordResetOtpRepository.delete(passwordResetOtp);
-            return;
         }
 
-        throw new RuntimeException("User not found.");
+// Update Users table (THIS IS WHAT LOGIN USES)
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    }
+        user.setPassword(encodedPassword);
 
-}
+        userRepository.save(user);
+
+// Delete OTP
+        passwordResetOtpRepository.delete(passwordResetOtp);
+
+}}
