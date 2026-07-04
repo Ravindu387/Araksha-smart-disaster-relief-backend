@@ -25,12 +25,43 @@ public class DataInitializer implements CommandLineRunner {
     private final NotificationRepository notificationRepository;
     private final CitizenRepository citizenRepository;
     private final VolunteerHubRepository volunteerHubRepository;
+    private final UserRepository userRepository;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
 
+        if (userRepository.count() == 0) {
+            // Seed Admin User
+            User admin = new User();
+            admin.setFirstName("System");
+            admin.setLastName("Admin");
+            admin.setEmail("araksha-admin@example.com");
+            admin.setPassword(passwordEncoder.encode("admin123"));
+            admin.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.ADMIN);
+            userRepository.save(admin);
+
+            // Seed Citizen User
+            User citizenUser = new User();
+            citizenUser.setFirstName("Alice");
+            citizenUser.setLastName("Smith");
+            citizenUser.setEmail("alice@example.com");
+            citizenUser.setPassword(passwordEncoder.encode("password123"));
+            citizenUser.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.CITIZEN);
+            userRepository.save(citizenUser);
+
+            // Seed Volunteer User
+            User volunteerUser = new User();
+            volunteerUser.setFirstName("Lisa");
+            volunteerUser.setLastName("Chen");
+            volunteerUser.setEmail("volunteer@araksha.com");
+            volunteerUser.setPassword(passwordEncoder.encode("volunteer123"));
+            volunteerUser.setRole(org.example.arakshasmartdisasterreliefbackend.enums.Role.VOLUNTEER);
+            userRepository.save(volunteerUser);
+        }
+
         if (citizenRepository.count() == 0) {
-            Citizen alice = new Citizen("Alice Smith", "alice@example.com", "+1 (555) 019-2834", "120 Houston Ave, Houston, TX", "password123");
+            Citizen alice = new Citizen("Alice Smith", "alice@example.com", "+1 (555) 019-2834", "120 Houston Ave, Houston, TX", passwordEncoder.encode("password123"));
             citizenRepository.save(alice);
         }
 

@@ -55,17 +55,22 @@ public class AuthServiceImpl implements AuthService {
             citizen.setFullName(request.getFirstName() + " " + request.getLastName());
             citizen.setEmail(request.getEmail());
             citizen.setPassword(user.getPassword());
-            citizen.setPhoneNumber("");
+            citizen.setPhoneNumber(request.getPhone() != null ? request.getPhone() : "");
             citizen.setAddress("");
             citizenRepository.save(citizen);
         } else if (request.getRole() == Role.VOLUNTEER) {
+            String volunteerPhone = (request.getPhone() != null && !request.getPhone().isBlank()) 
+                    ? request.getPhone() 
+                    : "V-PHONE-" + UUID.randomUUID().toString().substring(0, 8);
+            
             Volunteer volunteer = new Volunteer();
             volunteer.setName(request.getFirstName() + " " + request.getLastName());
             volunteer.setLocation("Houston, TX");
             volunteer.setStatus("Available");
             volunteer.setRating(5.0);
             volunteer.setTasks(0);
-            volunteer.setPhone("");
+            volunteer.setPhone(volunteerPhone);
+            volunteer.setEmail(request.getEmail());
             volunteer.setSkills(new ArrayList<>());
             volunteerRepository.save(volunteer);
 
@@ -73,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
                     .volunteerCode("V-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase())
                     .name(request.getFirstName() + " " + request.getLastName())
                     .email(request.getEmail())
-                    .phone("")
+                    .phone(volunteerPhone)
                     .status("Available")
                     .available(true)
                     .currentLatitude(29.76)
