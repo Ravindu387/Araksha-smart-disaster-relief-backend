@@ -3,6 +3,9 @@ package org.example.arakshasmartdisasterreliefbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "volunteer_hubs")
@@ -37,6 +40,21 @@ public class VolunteerHub {
 
         @Column(name = "current_longitude")
         private Double currentLongitude;
+
+        @Column(name = "address")
+        private String address;
+
+        @Column(name = "district")
+        private String district;
+
+        @ElementCollection(fetch = FetchType.EAGER)
+        @CollectionTable(
+                name = "volunteer_hub_skills",
+                joinColumns = @JoinColumn(name = "volunteer_hub_id")
+        )
+        @Column(name = "skill")
+        @Builder.Default
+        private List<String> skills = new ArrayList<>();
 
         @Column(nullable = false)
         private Boolean available;

@@ -1,6 +1,7 @@
 package org.example.arakshasmartdisasterreliefbackend.dto.response;
 
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,5 +28,11 @@ public class VolunteerHubResponse {
 
 
     private String phone;
+
+    private String address;
+
+    private String district;
+
+    private List<String> skills;
 
 }

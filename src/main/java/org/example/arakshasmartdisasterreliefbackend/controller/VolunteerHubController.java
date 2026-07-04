@@ -51,6 +51,25 @@ public class VolunteerHubController {
         );
     }
 
+    @PutMapping("/{id}/location")
+    public ResponseEntity<VolunteerHubResponse> updateLocation(
+            @PathVariable Long id,
+            @RequestParam Double latitude,
+            @RequestParam Double longitude) {
+        return ResponseEntity.ok(
+                service.updateLocation(id, latitude, longitude)
+        );
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<VolunteerHubResponse> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        return ResponseEntity.ok(
+                service.updateStatus(id, status)
+        );
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(
             @PathVariable Long id){
