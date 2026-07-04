@@ -24,8 +24,29 @@ public class AuthController {
     }
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
-            @RequestBody LoginRequest request) {
+            @RequestBody LoginRequest request,
+            jakarta.servlet.http.HttpServletResponse response) {
 
-        return ResponseEntity.ok(authService.login(request));
+        LoginResponse loginResponse = authService.login(request);
+
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("token", loginResponse.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // true in prod profile
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60);
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(jakarta.servlet.http.HttpServletResponse response) {
+        jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("token", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return ResponseEntity.ok("Logout Successful");
     }
 }

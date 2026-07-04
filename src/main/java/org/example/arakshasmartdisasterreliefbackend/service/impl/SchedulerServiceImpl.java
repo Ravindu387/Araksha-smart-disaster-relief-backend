@@ -216,4 +216,35 @@ public class SchedulerServiceImpl implements SchedulerService {
     private void executeDailySystemSummary() {
         reportService.generateAndSaveDailySummary();
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public SchedulerJob toggleJobStatus(String jobKey, String status) {
+        SchedulerJob job = jobRepository.findByJobKey(jobKey)
+                .orElseThrow(() -> new RuntimeException("Job not found: " + jobKey));
+        job.setStatus(status);
+        try {
+            org.springframework.scheduling.support.CronExpression cron = org.springframework.scheduling.support.CronExpression.parse(job.getCronExpression());
+            job.setNextRun("ACTIVE".equalsIgnoreCase(status) ? cron.next(LocalDateTime.now()) : null);
+        } catch (Exception e) {
+            // Ignore cron parsing errors
+        }
+        return jobRepository.save(job);
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public SchedulerJob updateJob(String jobKey, String cronExpression, String status) {
+        SchedulerJob job = jobRepository.findByJobKey(jobKey)
+                .orElseThrow(() -> new RuntimeException("Job not found: " + jobKey));
+        job.setCronExpression(cronExpression);
+        job.setStatus(status);
+        try {
+            org.springframework.scheduling.support.CronExpression cron = org.springframework.scheduling.support.CronExpression.parse(cronExpression);
+            job.setNextRun("ACTIVE".equalsIgnoreCase(status) ? cron.next(LocalDateTime.now()) : null);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid Cron Expression: " + cronExpression, e);
+        }
+        return jobRepository.save(job);
+    }
 }

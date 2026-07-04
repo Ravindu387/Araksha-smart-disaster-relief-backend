@@ -78,6 +78,9 @@ public class AuthServiceImpl implements AuthService {
                     .available(true)
                     .currentLatitude(29.76)
                     .currentLongitude(-95.36)
+                    .address("123 Relief Street, Colombo")
+                    .district("Colombo")
+                    .skills(java.util.Arrays.asList("First Aid", "Logistics"))
                     .build();
             volunteerHubRepository.save(volunteerHub);
         }

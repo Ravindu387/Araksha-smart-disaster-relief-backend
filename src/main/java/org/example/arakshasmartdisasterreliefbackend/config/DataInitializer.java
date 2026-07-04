@@ -225,6 +225,9 @@ public class DataInitializer implements CommandLineRunner {
                     .available(true)
                     .currentLatitude(29.76)
                     .currentLongitude(-95.36)
+                    .address("456 Oak Avenue, Colombo 03")
+                    .district("Colombo")
+                    .skills(java.util.Arrays.asList("Medical", "Logistics", "First Aid"))
                     .build());
             volunteerHubRepository.save(VolunteerHub.builder()
                     .volunteerCode("V-0002")
@@ -235,6 +238,9 @@ public class DataInitializer implements CommandLineRunner {
                     .available(true)
                     .currentLatitude(37.33)
                     .currentLongitude(-121.89)
+                    .address("789 Pine Road, Kandy")
+                    .district("Kandy")
+                    .skills(java.util.Arrays.asList("Search & Rescue", "First Aid"))
                     .build());
             volunteerHubRepository.save(VolunteerHub.builder()
                     .volunteerCode("V-0003")
@@ -245,6 +251,9 @@ public class DataInitializer implements CommandLineRunner {
                     .available(true)
                     .currentLatitude(37.77)
                     .currentLongitude(-122.41)
+                    .address("101 Lake View Drive, Galle")
+                    .district("Galle")
+                    .skills(java.util.Arrays.asList("Water Rescue", "First Aid"))
                     .build());
         }
     }

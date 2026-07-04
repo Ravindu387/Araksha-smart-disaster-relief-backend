@@ -1,6 +1,7 @@
 package org.example.arakshasmartdisasterreliefbackend.dto.request;
 
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +29,12 @@ public class VolunteerHubRequest {
 
     private Double currentLongitude;
 
+
+    private String address;
+
+    private String district;
+
+    private List<String> skills;
 
     private Boolean available;
 }
