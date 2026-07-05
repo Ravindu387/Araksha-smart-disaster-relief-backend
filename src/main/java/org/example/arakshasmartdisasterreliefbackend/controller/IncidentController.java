@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/incidents")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class IncidentController {
 
     private final IncidentRepository incidentRepository;
