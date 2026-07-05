@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/emergency-requests")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class EmergencyRequestController {
 
     private final EmergencyRequestService emergencyRequestService;

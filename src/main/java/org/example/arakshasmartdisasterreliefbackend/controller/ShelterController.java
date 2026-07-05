@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shelters")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class ShelterController {
     private final ShelterServiceImpl shelterService;
 

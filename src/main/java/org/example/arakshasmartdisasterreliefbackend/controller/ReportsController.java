@@ -14,7 +14,7 @@ import java.util.List;
  * Base URL: /api/v1/reports
  *
  * This controller is permitted by SecurityConfig without authentication.
- * CORS headers are added by CorsConfig (allowing http://localhost:4200).
+ * CORS headers are configured via properties (e.g. allowed-origins).
  *
  * Endpoints:
  *   GET /api/v1/reports?period=LAST_30_DAYS  → ReportsPageResponse (full page data)
@@ -24,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/reports")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class ReportsController {
 
     private final ReportsService reportsService;

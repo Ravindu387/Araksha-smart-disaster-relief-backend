@@ -11,7 +11,7 @@ import org.example.arakshasmartdisasterreliefbackend.dto.request.VerifyOtpReques
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowed-origins}")
 public class ForgotPasswordController {
 
     private final ForgotPasswordService forgotPasswordService;

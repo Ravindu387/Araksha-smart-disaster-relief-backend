@@ -68,7 +68,7 @@ The persistence layer consists of the following JPA entities:
 
 ### 2. Cookie CSRF Protection
 - Enforced utilizing Spring Security's `CookieCsrfTokenRepository.withHttpOnlyFalse()` to authorize state-changing request actions (POST, PUT, DELETE).
-- CORS headers are configured to whitelist credentialed requests (`withCredentials: true`) from `http://localhost:4200`.
+- CORS headers are configured via property configurations (`cors.allowed-origins`) to whitelist credentialed requests (`withCredentials: true`) from the frontend application (e.g. S3 hosting environment `http://araksha-forntend-storage.s3-website.eu-north-1.amazonaws.com`).
 
 ### 3. Layered Web Security Settings
 ```java
