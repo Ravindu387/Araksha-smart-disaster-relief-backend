@@ -26,10 +26,7 @@ public class  SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(org.springframework.security.config.Customizer.withDefaults())
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(org.springframework.security.web.csrf.CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/auth/**", "/api/external/**")
-                )
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
