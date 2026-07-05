@@ -1,4 +1,4 @@
-name: Deploy Spring Boot to EC2
+name: Auto Deploy Backend to EC2
 
 on:
   push:
@@ -9,28 +9,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH into Server and Update
+      - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ubuntu/Araksha-smart-disaster-relief-backend 
-            
-            pkill -f 'java -jar' || true
-            sleep 2
+            cd ~/Araksha-smart-disaster-relief-backend
             
             git pull origin dev
             
+            mvn clean package -DskipTests
             
-            chmod +x mvnw
+            sudo fuser -k 8080/tcp || true
             
-            
-            ./mvnw clean package -DskipTests
-            
-            
-            nohup java -jar target/Araksha-smart-disaster-relief-Backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 </dev/null &
-            
-            
-            exit 0
+            nohup java -jar target/*.jar > app.log 2>&1 &
