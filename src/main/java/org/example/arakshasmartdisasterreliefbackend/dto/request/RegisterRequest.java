@@ -17,4 +17,9 @@ public class RegisterRequest {
     private String password;
     private Role role;
     private String phone;
+    private String location;
+    private java.util.List<String> skills;
+    private String profilePhotoUrl;
+    private String idVerificationDocUrl;
 }
+

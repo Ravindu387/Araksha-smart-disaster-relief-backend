@@ -65,13 +65,15 @@ public class AuthServiceImpl implements AuthService {
             
             Volunteer volunteer = new Volunteer();
             volunteer.setName(request.getFirstName() + " " + request.getLastName());
-            volunteer.setLocation("Houston, TX");
+            volunteer.setLocation(request.getLocation() != null && !request.getLocation().isBlank() ? request.getLocation() : "Colombo");
             volunteer.setStatus("Available");
             volunteer.setRating(5.0);
             volunteer.setTasks(0);
             volunteer.setPhone(volunteerPhone);
             volunteer.setEmail(request.getEmail());
-            volunteer.setSkills(new ArrayList<>());
+            volunteer.setSkills(request.getSkills() != null ? request.getSkills() : new ArrayList<>());
+            volunteer.setProfilePhotoUrl(request.getProfilePhotoUrl());
+            volunteer.setIdVerificationDocUrl(request.getIdVerificationDocUrl());
             volunteerRepository.save(volunteer);
 
             VolunteerHub volunteerHub = VolunteerHub.builder()
@@ -81,11 +83,11 @@ public class AuthServiceImpl implements AuthService {
                     .phone(volunteerPhone)
                     .status("Available")
                     .available(true)
-                    .currentLatitude(29.76)
-                    .currentLongitude(-95.36)
-                    .address("123 Relief Street, Colombo")
-                    .district("Colombo")
-                    .skills(java.util.Arrays.asList("First Aid", "Logistics"))
+                    .currentLatitude(6.9271) // Default to Colombo coordinates
+                    .currentLongitude(79.8612)
+                    .address(request.getLocation() != null && !request.getLocation().isBlank() ? request.getLocation() : "Colombo")
+                    .district(request.getLocation() != null && !request.getLocation().isBlank() ? request.getLocation() : "Colombo")
+                    .skills(request.getSkills() != null ? request.getSkills() : new ArrayList<>())
                     .build();
             volunteerHubRepository.save(volunteerHub);
         }

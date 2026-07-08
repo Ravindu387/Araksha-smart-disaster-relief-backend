@@ -38,8 +38,13 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public SettingsDTO updateSettings(SettingsDTO dto) {
 
-        Settings settings = repository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Settings not found"));
+        Settings settings;
+        if (dto.getId() == null) {
+            settings = repository.findAll().stream().findFirst().orElseGet(Settings::new);
+        } else {
+            settings = repository.findById(dto.getId())
+                    .orElseGet(() -> repository.findAll().stream().findFirst().orElseGet(Settings::new));
+        }
 
         settings.setFirstName(dto.getFirstName());
         settings.setLastName(dto.getLastName());
